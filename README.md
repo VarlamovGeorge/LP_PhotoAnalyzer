@@ -20,8 +20,10 @@
 7. Дополнительно: создание видео (набор слайдов) или публикации в соцсети псевдослучайных фотографий на какую-то тему.
 
 #Ресурсы:
-+ https://course.fast.ai/
-+ ... (TBD)
+1. [Coursera Yandex + MIPT](https://www.coursera.org/specializations/machine-learning-data-analysis)
+2. [ШАД](https://yandexdataschool.ru/edu-process/courses/machine-learning)
+3. [Документация по TF на русском](https://www.asozykin.ru/courses/nnpython)
+4. [Practical Deep Learning For Coders](https://course.fast.ai/)
 
 #Задачи:
 + Разобраться с механизмами анализа изображений;
