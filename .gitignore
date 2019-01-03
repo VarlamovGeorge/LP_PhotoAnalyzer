@@ -116,3 +116,6 @@ data/
 
 #Idea
 .idea/
+
+/volumes/postgres
+

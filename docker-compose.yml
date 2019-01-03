@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+
+    webapp:
+        build: ./webapp
+        ports: 
+            - "5000:5000"
+        depends_on:
+            - postgres
+            - rabbitmq
+
+    photoanalyse:
+        build: ./photo-analyzer-service
+        ports:
+            - "5001:5000"
+    
+    crawler:
+        build: ./crawler
+        depends_on:
+            - postgres
+            - rabbitmq
+
+    rabbitmq:
+        image: rabbitmq:3.7.8
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: mypass
+        ports:
+            - "5673:5672"
+
+    postgres:
+        image: postgres:11.1
+        restart: always
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./volumes/postgres:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: example    
+
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
