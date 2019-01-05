@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template, flash, redirect, request, url_for
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 
 from webapp.model import db, Users
@@ -51,6 +51,12 @@ def create_app():
     def logout():
         logout_user()
         flash('Вы успешно разлогинились')
+        return redirect(url_for('index'))
+
+    @app.route('/search', methods=['POST'])
+    def search():
+        selected_classes = request.form.getlist('class')
+        print(selected_classes)
         return redirect(url_for('index'))
 
     return app
