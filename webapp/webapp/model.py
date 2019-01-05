@@ -9,7 +9,7 @@ class Algorithms(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     var = db.Column(db.String, nullable=False)
-    parents = db.relationship("PhotosClasses", back_populates="child")
+    #parents = db.relationship("PhotosClasses", back_populates="child")
 
     def __repr__(self):
         return '<Algorithm {}>'.format(self.name)
