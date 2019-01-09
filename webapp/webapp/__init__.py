@@ -56,8 +56,17 @@ def create_app():
     @app.route('/search', methods=['POST'])
     def search():
         selected_classes = request.form.getlist('class')
-        print(selected_classes)
+        selected_start_date = request.form.get('start_date')
+        selected_end_date = request.form.get('end_date')
+        print(selected_classes, selected_start_date, selected_end_date)
         return redirect(url_for('index'))
+
+    @app.route('/settings')
+    def settings():
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
+        title = 'Настройки системы'
+        return render_template('settings.html', page_title=title)
 
     return app
 
