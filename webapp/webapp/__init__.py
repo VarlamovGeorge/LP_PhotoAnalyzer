@@ -10,6 +10,9 @@ def create_app():
     app.config.from_pyfile('config.py')
     db.init_app(app)
 
+    from webapp.settings.blueprint import settings
+    app.register_blueprint(settings, url_prefix='/config')
+
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login'

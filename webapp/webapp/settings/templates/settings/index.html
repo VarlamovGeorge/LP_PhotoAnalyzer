@@ -1,0 +1,14 @@
+{% extends 'settings/layout.html' %}
+
+{% block body %}
+<h1>Настройки пользователя</h1>
+
+
+<h2>Подключенные хранилища</h2>
+<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Add Dropbox</a><br>
+<ul>
+{% for storage in context.storages %}
+    <li>{{ storage.name }}</li>
+{% endfor %}
+</ul>
+{% endblock%}

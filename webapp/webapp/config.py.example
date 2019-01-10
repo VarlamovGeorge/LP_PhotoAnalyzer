@@ -1,0 +1,6 @@
+SQLALCHEMY_DATABASE_URI='sqlite:///../database.db'
+SECRET_KEY='Сюда вводим рандомную строку'
+
+DROPBOX_APP_KEY = ''
+DROPBOX_APP_SECRET = ''
+
