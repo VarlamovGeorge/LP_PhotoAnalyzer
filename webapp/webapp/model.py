@@ -72,7 +72,7 @@ class StorageUsers(db.Model):
     folders = db.relationship('Folders', backref='storageusers', lazy=True)
 
     def __repr__(self):
-        return '<Storage user {}>'.format(self.login)
+        return '<Storage user {}>'.format(self.name)
 
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'
