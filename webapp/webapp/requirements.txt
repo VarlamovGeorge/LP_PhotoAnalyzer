@@ -1,3 +1,6 @@
+amqp==2.3.2
+billiard==3.5.0.5
+celery==4.2.1
 certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
@@ -9,10 +12,13 @@ Flask-WTF==0.14.2
 idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10
+kombu==4.2.2.post1
 MarkupSafe==1.1.0
+pytz==2018.9
 requests==2.21.0
 six==1.12.0
 SQLAlchemy==1.2.15
 urllib3==1.24.1
+vine==1.2.0
 Werkzeug==0.14.1
 WTForms==2.2.1
