@@ -4,9 +4,11 @@ WORKDIR /app
 
 EXPOSE 5000
 
-COPY ./webapp .
+ENV FLASK_APP=webapp
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./webapp webapp
 
-CMD [ "python3", "app.py" ]
+RUN pip install --no-cache-dir -r webapp/requirements.txt
+
+CMD [ "flask", "run", "--host=0.0.0.0" ]
 
