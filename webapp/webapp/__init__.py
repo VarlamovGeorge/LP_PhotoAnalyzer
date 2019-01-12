@@ -11,7 +11,7 @@ def create_app():
     db.init_app(app)
 
     from webapp.settings.blueprint import settings
-    app.register_blueprint(settings, url_prefix='/config')
+    app.register_blueprint(settings, url_prefix='/settings')
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -63,13 +63,6 @@ def create_app():
         selected_end_date = request.form.get('end_date')
         print(selected_classes, selected_start_date, selected_end_date)
         return redirect(url_for('index'))
-
-    @app.route('/settings')
-    def settings():
-        if not current_user.is_authenticated:
-            return redirect(url_for('login'))
-        title = 'Настройки системы'
-        return render_template('settings.html', page_title=title)
 
     return app
 
