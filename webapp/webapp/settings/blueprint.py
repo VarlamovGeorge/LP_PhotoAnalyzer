@@ -13,8 +13,6 @@ settings = Blueprint('settings', __name__, template_folder='templates')
 @settings.route('/')
 @login_required
 def index():
-    print(current_user.storageusers)
-
     context = {
         'title' : 'Settings',
         'current_user' : current_user,
@@ -52,7 +50,7 @@ def dropbox_auth_finish():
         http_status(403)
     except NotApprovedException as e:
         flash('Not approved?  Why not?')
-        return redirect(url_for('settings'))
+        return redirect(url_for('settings.index'))
     except ProviderException as e:
         app.logger.error("Auth error: %s" % (e,))
         http_status(403)
