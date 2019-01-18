@@ -14,11 +14,13 @@ class Algorithms(db.Model):
     def __repr__(self):
         return '<Algorithm {}>'.format(self.name)
 
+
 photosclasses = db.Table('photos_classes',
     db.Column('photo_id', db.Integer, db.ForeignKey('photos.id'), primary_key=True),
     db.Column('class_id', db.Integer, db.ForeignKey('classes.id'), primary_key=True),
     db.Column('alg_id', db.Integer, db.ForeignKey('algorithms.id'), primary_key=True),
     db.Column('weight', db.Float, nullable=False))
+
 
 class Classes(db.Model):
     __tablename__ = 'classes'
@@ -29,7 +31,12 @@ class Classes(db.Model):
     def __repr__(self):
         return '<Class {}>'.format(self.name)
 
+
 class Photos(db.Model):
+    STATUS_NEED_RESYNC = 0
+    STATUS_NEED_CLASSIFY = 1
+    STATUS_OK = 100
+
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
     create_date = db.Column(db.DateTime, nullable=False)
@@ -38,8 +45,20 @@ class Photos(db.Model):
     latitude = db.Column(db.Integer)
     folder_id = db.Column(db.Integer, db.ForeignKey('folders.id'), nullable=False)
 
+    remote_id = db.Column(db.String)
+    path = db.Column(db.String)
+    name = db.Column(db.String)
+    size = db.Column(db.Integer)
+    width = db.Column(db.Integer)
+    height = db.Column(db.Integer)
+    status = db.Column(db.Integer)
+
+    revision = db.Column(db.String)
+    content_hash = db.Column(db.String)
+
     def __repr__(self):
         return '<Image {}>'.format(self.name)
+
 
 class Folders(db.Model):
     __tablename__ = 'folders'
@@ -50,6 +69,7 @@ class Folders(db.Model):
 
     def __repr__(self):
         return '<Folder {}>'.format(self.local_path)
+
 
 class Storages(db.Model):
     __tablename__ = 'storages'
@@ -62,6 +82,7 @@ class Storages(db.Model):
     def __repr__(self):
         return '<Storage name {}>'.format(self.name)
 
+
 class StorageUsers(db.Model):
     __tablename__ = 'storage_users'
     id = db.Column(db.Integer, primary_key=True)
@@ -73,6 +94,7 @@ class StorageUsers(db.Model):
 
     def __repr__(self):
         return '<Storage user {}>'.format(self.name)
+
 
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -90,6 +112,7 @@ class Users(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User {}>'.format(self.login)
+
 
 class UserPreferences(db.Model):
     __tablename__ = 'user_preferences'
