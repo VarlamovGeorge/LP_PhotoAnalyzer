@@ -1,6 +1,7 @@
 from webapp import db, create_app
 from webapp.model import Storages, Classes
 
+# Словарь классов
 classes_dict = [
     {'id': 1, 'label': 'cats'},
     {'id': 2, 'label': 'dogs'},
