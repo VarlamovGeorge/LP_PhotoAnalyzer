@@ -1,5 +1,6 @@
 from flask import Flask, render_template, flash, redirect, request, url_for
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
+from flask_migrate import Migrate
 
 from webapp.model import db, Users
 from webapp.forms import LoginForm
@@ -9,6 +10,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     from webapp.settings.blueprint import settings
     app.register_blueprint(settings, url_prefix='/settings')
