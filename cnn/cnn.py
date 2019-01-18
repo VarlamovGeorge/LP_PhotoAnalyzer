@@ -4,14 +4,13 @@ from keras.preprocessing import image
 from keras.applications.imagenet_utils import decode_predictions
 import os
 import numpy as np
-import sys
-sys.path.insert(0, './trained')
 
-import cnn_properties
+import trained.cnn_properties as cp
 
-cnn_properties.classes_list.sort()
-cnn_ver = cnn_properties.ver
-cnn_descr = cnn_properties.description
+cp.classes_list.sort()
+cnn_ver = cp.ver
+cnn_descr = cp.description
+cnn_date = cp.create_date
 
 
 def load_cnn_model():
@@ -65,9 +64,9 @@ def img_analyze(input_image, loaded_model):
     cls_sorted = sorting[0]
 
     # Словарь с результатами
-    prediction = {'alg_name': cnn_descr, 'alg_ver': cnn_ver}
+    prediction = {'alg_name': cnn_descr, 'alg_ver': cnn_ver, 'create_date': cnn_date}
     for value in cls_sorted:
-        predicted_label = cnn_properties.classes_list[value]
+        predicted_label = cp.classes_list[value]
         prob = y_prob[0][value]
         #prob = "%.5f" % round(prob,5)
         #print("I have %s%% sure that it belongs to %s." % (prob, predicted_label))
