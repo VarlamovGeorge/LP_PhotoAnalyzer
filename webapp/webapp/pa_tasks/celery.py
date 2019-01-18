@@ -61,24 +61,35 @@ def sync_dropbox_storage(storage):
     ACCESS_TOKEN = storage.credentials
 
     # Step1
-    Photos.update().
-            where(Photos.folder_id == Folders.id).
-            where(Folders.storage_user_id = storage.storage_id).
-            values(Photos.status == Photos.STATUS_NEED_RESYNC)
+    db.session.query(Photos) \
+             .filter(Photos.folder_id == Folders.id) \
+             .filter(Folders.storage_user_id == storage.id) \
+             .update({'status': Photos.STATUS_NEED_RESYNC}, synchronize_session='fetch')
     db.session.commit()
 
     # Step2
     dbx = dropbox.Dropbox(ACCESS_TOKEN)
     result = dbx.files_list_folder("", recursive=True, include_media_info=True)
 
+    root_folder = db.session.query(Folders).filter(Folders.storage_user_id==storage.id).filter(Folders.local_path=='/').first()
+    if root_folder is None:
+        root_folder = Folders(
+                local_path='/',
+                storage_user_id=storage.id)
+        db.session.add(root_folder)
+        db.session.commit()
+        db.session.refresh(root_folder)
+
     def process_file(fmd):
         if not fmd.name.endswith('.jpg'):
             return
-        image_in_db = Photos.query.filter(Photos.remote_id==fmd.id).first()
+        image_in_db = db.session.query(Photos).filter(Photos.remote_id==fmd.id).first()
         if image_in_db is None:
             logger.info('Картинка "{}" в базе не найдена'.format(fmd.path_display))
 
             new_image = Photos(
+                    create_date=fmd.server_modified,
+                    folder_id = root_folder.id,
                     remote_id=fmd.id,
                     path=fmd.path_lower,
                     revision=fmd.rev,
@@ -142,12 +153,14 @@ def sync_file_list(id_storage):
     '''
     logger.info('Task 2: sync_file_list for id storage: %s' % id_storage)
 
-    storage = StorageUsers.query.filter(StorageUsers.id == id_storage).first()
-    if storage is None:
-        return
+    app = create_app()
+    with app.app_context():
+        storage = StorageUsers.query.filter(StorageUsers.id == id_storage).first()
+        if storage is None:
+            return
 
-    if storage.storage_id == 1:
-        sync_dropbox_storage(storage)
+        if storage.storage_id == 1:
+            sync_dropbox_storage(storage)
 
 
 @app.task
