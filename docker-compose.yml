@@ -6,7 +6,7 @@ services:
         build: ./webapp
         ports: 
             - "5000:5000"
-        command: flask run --host=0.0.0.0
+        command: ./entrypoint-webapp.sh
         depends_on:
             - postgres
             - rabbitmq
@@ -17,7 +17,7 @@ services:
         environment:
             - C_FORCE_ROOT=true        
         depends_on:
-            - rabbitmq
+            - webapp
 
     task2_sync:
         build: ./webapp
@@ -25,7 +25,7 @@ services:
         environment:
             - C_FORCE_ROOT=true
         depends_on:
-            - rabbitmq
+            - webapp
         
     task3_cnn:
         build: ./webapp
@@ -33,7 +33,7 @@ services:
         environment:
             - C_FORCE_ROOT=true
         depends_on:
-            - rabbitmq
+            - webapp
 
     rabbitmq:
         image: rabbitmq:3.7.8-alpine

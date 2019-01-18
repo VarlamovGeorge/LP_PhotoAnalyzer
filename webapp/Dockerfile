@@ -1,4 +1,4 @@
-FROM python:3.6.8-alpine
+FROM python:3.6.8
 
 #RUN addgroup -g 666 appuser && adduser -D -H -u 666 -G appuser appuser
 
