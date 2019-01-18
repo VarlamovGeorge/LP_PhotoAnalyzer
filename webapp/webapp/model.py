@@ -8,7 +8,7 @@ class Algorithms(db.Model):
     __tablename__ = 'algorithms'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    ver = db.Column(db.String, nullable=False)
+    create_date = db.Column(db.DateTime, nullable=False)
     #parents = db.relationship("PhotosClasses", back_populates="child")
 
     def __repr__(self):
