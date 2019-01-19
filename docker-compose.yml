@@ -6,31 +6,45 @@ services:
         build: ./webapp
         ports: 
             - "5000:5000"
+        command: ./entrypoint-webapp.sh
         depends_on:
             - postgres
             - rabbitmq
 
-    photoanalyse:
-        build: ./photo-analyzer-service
-        ports:
-            - "5001:5000"
-    
-    crawler:
-        build: ./crawler
+    task1_beat:
+        build: ./webapp
+        command: celery -A webapp.pa_tasks.celery worker -l info -Q celery --hostname=c1@%h -B
+        environment:
+            - C_FORCE_ROOT=true        
         depends_on:
-            - postgres
-            - rabbitmq
+            - webapp
+
+    task2_sync:
+        build: ./webapp
+        command: celery -A webapp.pa_tasks.celery worker -l info -Q q2 --hostname=c2@%h
+        environment:
+            - C_FORCE_ROOT=true
+        depends_on:
+            - webapp
+        
+    task3_cnn:
+        build: ./webapp
+        command: celery -A webapp.pa_tasks.celery worker -l info -Q q3 --hostname=c3@%h
+        environment:
+            - C_FORCE_ROOT=true
+        depends_on:
+            - webapp
 
     rabbitmq:
-        image: rabbitmq:3.7.8
-        environment:
-            RABBITMQ_DEFAULT_USER: admin
-            RABBITMQ_DEFAULT_PASS: mypass
+        image: rabbitmq:3.7.8-alpine
+        #environment:
+        #    RABBITMQ_DEFAULT_USER: admin
+        #    RABBITMQ_DEFAULT_PASS: mypass
         ports:
             - "5673:5672"
 
     postgres:
-        image: postgres:11.1
+        image: postgres:11.1-alpine
         restart: always
         ports:
             - "5432:5432"
@@ -41,8 +55,3 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: example    
 
-    adminer:
-        image: adminer
-        restart: always
-        ports:
-            - 8080:8080

@@ -13,8 +13,6 @@ settings = Blueprint('settings', __name__, template_folder='templates')
 @settings.route('/')
 @login_required
 def index():
-    print(current_user.storageusers)
-
     context = {
         'title' : 'Settings',
         'current_user' : current_user,
@@ -52,13 +50,10 @@ def dropbox_auth_finish():
         http_status(403)
     except NotApprovedException as e:
         flash('Not approved?  Why not?')
-        return redirect(url_for('settings'))
+        return redirect(url_for('settings.index'))
     except ProviderException as e:
         app.logger.error("Auth error: %s" % (e,))
         http_status(403)
-
-#    print(oauth_result.access_token)
-#    flash('Access token: %s' % oauth_result.access_token)
 
     storage = StorageUsers(
             name='Dropbox',
@@ -66,6 +61,13 @@ def dropbox_auth_finish():
             storage_id=1,
             global_user_id=current_user.id)
     db.session.add(storage)
+    db.session.commit()
+    db.session.refresh(storage)
+
+    root_folder = Folders(
+            local_path='/',
+            storage_user_id=storage.id)
+    db.session.add(root_folder)
     db.session.commit()
 
     return redirect(url_for('settings.index'))
