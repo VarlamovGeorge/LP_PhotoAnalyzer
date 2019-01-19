@@ -47,7 +47,6 @@ class Photos(db.Model):
 
     remote_id = db.Column(db.String)
     path = db.Column(db.String)
-    name = db.Column(db.String)
     size = db.Column(db.Integer)
     width = db.Column(db.Integer)
     height = db.Column(db.Integer)
