@@ -55,15 +55,19 @@ def dropbox_auth_finish():
         app.logger.error("Auth error: %s" % (e,))
         http_status(403)
 
-#    print(oauth_result.access_token)
-#    flash('Access token: %s' % oauth_result.access_token)
-
     storage = StorageUsers(
             name='Dropbox',
             credentials=oauth_result.access_token,
             storage_id=1,
             global_user_id=current_user.id)
     db.session.add(storage)
+    db.session.commit()
+    db.session.refresh(storage)
+
+    root_folder = Folders(
+            local_path='/',
+            storage_user_id=storage.id)
+    db.session.add(root_folder)
     db.session.commit()
 
     return redirect(url_for('settings.index'))
