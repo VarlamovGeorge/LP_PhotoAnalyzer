@@ -1,194 +1,176 @@
-<!doctype html>
-<html lang="ru">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "base.html" %}
+{% block body_content %}
+<div class='container'>
+  <div class='row'>
+    <div class='col-8'>
+      <h1>{{ page_title }}</h1>
+    </div>
+    <div class='col-4'>
+      <a href="{{ url_for('settings.index') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Настройки</a>
+      <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Вход</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Выход</a>
+    </div>
+  </div>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <div class='row'>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+      {% for message in messages %}
+      {{ message }}<br>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+  </div>
 
-    <title>{{ page_title }}</title>
-  </head>
-  <body>
-    <div class='container'>
-      <div class='row'>
-        <div class='col-8'>
-          <h1>{{ page_title }}</h1>
-        </div>
-        <div class='col-4'>
-          <a href="{{ url_for('settings.index') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Настройки</a>
-          <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Вход</a>
-          <a href="{{ url_for('logout') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Выход</a>
-        </div>
-      </div>
+  <form action="{{ url_for('search') }}" method="post">
+    <div class='row'>
+      <div class='col'>
 
-      <div class='row'>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <div class="alert alert-warning" role="alert">
-              {% for message in messages %}
-                {{ message }}<br>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
-      </div>
 
-      <form action="{{ url_for('search') }}" method="post">
-      <div class='row'>
-        <div class='col'>
-          
-          
-          <h3>Поиск по классу</h3>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="cats" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">
+        <h3>Поиск по классу</h3>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="cats" id="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck1">
             Кот/кошка
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="dogs" id="defaultCheck2">
-            <label class="form-check-label" for="defaultCheck2">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="dogs" id="defaultCheck2">
+          <label class="form-check-label" for="defaultCheck2">
             Собака
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="humans" id="defaultCheck3">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="humans" id="defaultCheck3">
+          <label class="form-check-label" for="defaultCheck1">
             Человек
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="cars" id="defaultCheck4">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="cars" id="defaultCheck4">
+          <label class="form-check-label" for="defaultCheck1">
             Автомобиль
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="cities" id="defaultCheck5">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="cities" id="defaultCheck5">
+          <label class="form-check-label" for="defaultCheck1">
             Город
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="seashores" id="defaultCheck6">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="seashores" id="defaultCheck6">
+          <label class="form-check-label" for="defaultCheck1">
             Пляж/побережье
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck7">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck7">
+          <label class="form-check-label" for="defaultCheck1">
             Пейзаж
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck8">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck8">
+          <label class="form-check-label" for="defaultCheck1">
             Еда
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck9">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck9">
+          <label class="form-check-label" for="defaultCheck1">
             Документы
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck10">
-            <label class="form-check-label" for="defaultCheck1">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck10">
+          <label class="form-check-label" for="defaultCheck1">
             Прочее
-            </label>
-          </div>  
-          
-        </div>
+          </label>
+        </div>  
 
-        <div class='col'>
-          <div class="container">
-              <div class="form-group">
-                <label >Начало анализируемого периода</label>
-                <input type="date" name="start_date" max="3000-12-31" min="2000-01-01" class="form-control">
-              </div>
-              <div class="form-group">
-                <label >Конец анализируемого периода</label>
-                <input type="date" name="end_date" min="2000-01-01" max="3000-12-31" class="form-control">
-              </div>
+      </div>
+
+      <div class='col'>
+        <div class="container">
+          <div class="form-group">
+            <label >Начало анализируемого периода</label>
+            <input type="date" name="start_date" max="3000-12-31" min="2000-01-01" class="form-control">
+          </div>
+          <div class="form-group">
+            <label >Конец анализируемого периода</label>
+            <input type="date" name="end_date" min="2000-01-01" max="3000-12-31" class="form-control">
           </div>
         </div>
-
-        <div class='col'>
-
-        </div>
-      </div>
-      
-
-      <div class='row'>
-        <div class='col-4'>
-
-        </div>
-        <div class='col-4'>
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Поиск</button>
-        </div>
-        <div class='col-4'>
-
-        </div>
-      </div> <!-- row -->
-
-      <div class='row-12'> 
-         <ul class="list-group" style="height: 250px; overflow-y: scroll;">
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-            <li class="list-group-item"><strong>Signature
-                Accommodations</strong>(1480m)
-            </li>
-        </ul>
       </div>
 
-      </form>
-    </div> <!--Container -->
+      <div class='col'>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  </body>
-</html>
+      </div>
+    </div>
+
+
+    <div class='row'>
+      <div class='col-4'>
+
+      </div>
+      <div class='col-4'>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Поиск</button>
+      </div>
+      <div class='col-4'>
+
+      </div>
+    </div> <!-- row -->
+
+    <div class='row-12'> 
+      <ul class="list-group" style="height: 250px; overflow-y: scroll;">
+        <li class="list-group-item"><strong>Signature
+        Accommodations</strong>(1480m)
+      </li>
+      <li class="list-group-item"><strong>Signature
+      Accommodations</strong>(1480m)
+    </li>
+    <li class="list-group-item"><strong>Signature
+    Accommodations</strong>(1480m)
+  </li>
+  <li class="list-group-item"><strong>Signature
+  Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+<li class="list-group-item"><strong>Signature
+Accommodations</strong>(1480m)
+</li>
+</ul>
+</div>
+
+</form>
+</div> <!--Container -->
+{% endblock %}
