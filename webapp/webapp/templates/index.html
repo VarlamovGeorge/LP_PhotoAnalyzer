@@ -2,17 +2,6 @@
 {% block body_content %}
 <div class='container'>
   <div class='row'>
-    <div class='col-8'>
-      <h1>{{ page_title }}</h1>
-    </div>
-    <div class='col-4'>
-      <a href="{{ url_for('settings.index') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Настройки</a>
-      <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Вход</a>
-      <a href="{{ url_for('logout') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Выход</a>
-    </div>
-  </div>
-
-  <div class='row'>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="alert alert-warning" role="alert">
@@ -44,49 +33,43 @@
         </div>
         <div class="form-check">
           <input class="form-check-input" name='class' type="checkbox" value="humans" id="defaultCheck3">
-          <label class="form-check-label" for="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck3">
             Человек
           </label>
         </div>
         <div class="form-check">
           <input class="form-check-input" name='class' type="checkbox" value="cars" id="defaultCheck4">
-          <label class="form-check-label" for="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck4">
             Автомобиль
           </label>
         </div>
         <div class="form-check">
           <input class="form-check-input" name='class' type="checkbox" value="cities" id="defaultCheck5">
-          <label class="form-check-label" for="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck5">
             Город
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="seashores" id="defaultCheck6">
-          <label class="form-check-label" for="defaultCheck1">
-            Пляж/побережье
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck7">
-          <label class="form-check-label" for="defaultCheck1">
+          <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck6">
+          <label class="form-check-label" for="defaultCheck6">
             Пейзаж
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck8">
-          <label class="form-check-label" for="defaultCheck1">
+          <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck7">
+          <label class="form-check-label" for="defaultCheck7">
             Еда
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck9">
-          <label class="form-check-label" for="defaultCheck1">
+          <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck8">
+          <label class="form-check-label" for="defaultCheck8">
             Документы
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck10">
-          <label class="form-check-label" for="defaultCheck1">
+          <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck9">
+          <label class="form-check-label" for="defaultCheck9">
             Прочее
           </label>
         </div>  

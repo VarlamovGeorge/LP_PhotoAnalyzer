@@ -28,7 +28,11 @@ def create_app():
     @login_required
     def index():
         title = 'Photo Analyzer'
-        return render_template('index.html', page_title=title)
+        if current_user.is_authenticated:
+            user = current_user.login
+        else:
+            user = 'guest'
+        return render_template('index.html', page_title=title, user=user)
 
 
     @app.route('/login')
