@@ -8,7 +8,7 @@ import numpy as np
 import trained.cnn_properties as cp
 
 cp.classes_list.sort()
-cnn_ver = cp.ver
+# cnn_ver = cp.ver
 cnn_descr = cp.description
 cnn_date = cp.create_date
 
@@ -64,7 +64,7 @@ def img_analyze(input_image, loaded_model):
     cls_sorted = sorting[0]
 
     # Словарь с результатами
-    prediction = {'alg_name': cnn_descr, 'alg_ver': cnn_ver, 'create_date': cnn_date}
+    prediction = {'alg_name': cnn_descr, 'create_date': cnn_date}
     for value in cls_sorted:
         predicted_label = cp.classes_list[value]
         prob = y_prob[0][value]
