@@ -3,8 +3,9 @@ from flask_login import current_user, LoginManager, login_user, logout_user, log
 from flask_migrate import Migrate
 
 from webapp.model import db, Users
+from webapp.settings.models import StorageUsers, Storages, UserPreferences
 from webapp.forms import LoginForm
-
+from webapp.settings.views import settings
 
 def create_app():
     app = Flask(__name__)
@@ -12,7 +13,6 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    from webapp.settings.blueprint import settings
     app.register_blueprint(settings, url_prefix='/settings')
 
     login_manager = LoginManager()
