@@ -29,3 +29,6 @@ class UserPreferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     classification_threshold = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return '<User preferences {}>'.format(self.id)
