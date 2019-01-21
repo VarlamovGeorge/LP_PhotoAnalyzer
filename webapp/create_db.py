@@ -1,6 +1,8 @@
 import os
+import sys
 import random
 from datetime import datetime
+from getpass import getpass
 from webapp import db, create_app
 from webapp.model import *
 from webapp.settings.models import *
@@ -20,6 +22,9 @@ classes_dict = [
 
 # Указываем путь папки, из которой все jpg-файлы попадут в БД
 src_path = 'C:\\Users\\Jenkins\\Desktop\\ремонт'
+
+app = create_app()
+db.create_all(app=app)
 
 def create_new():
     try:
@@ -47,13 +52,12 @@ def create_new():
 
     except:
         print('ОШИБКА при попытке создания новой БД: Возможно Вы не удалили старую базу...')
+        sys.exit(0)
        
 def fill_db():
-        # Подключаем базу
-    app = create_app()
-    db.create_all(app=app)
-
-    
+    # Подключаем базу
+    #app = create_app()
+    #db.create_all(app=app)
     
     # Читаем файлы из папки и всех вложенных
     files_list = []
@@ -117,15 +121,44 @@ def fill_db():
 
         print('Отнесение фотографий к классам выполнено.')
 
+def create_admin():
+    # Вносим в БД дефолтного пользователя с id=0
+    while True:
+        pass1 = getpass('Введите пароль для пользователя admin:')
+        pass2 = getpass('Повторите пароль:')
+
+        if not pass1 == pass2:
+            print('Пароли не совпадают! Пользователь admin не создан...')
+            #db.session.rollback()
+        else:
+            break
+
+    with app.app_context():
+        new_user = Users(id=0, login='admin')
+        new_user.set_password(pass1)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        print('Администратор добавлен')
+
+
 def main():
-    choosen_act = input('1 - только создание новой БД; \n2 - создание новой БД и заполнение её данными из папки {};\nq - выход:\n'.format(src_path))
+    choosen_act = input('1 - только создание новой БД; \n \
+    2 - (1)+заполнение её данными из папки {};\n \
+    3 - (2)+создание пользователя admin; \n \
+    q - выход:\n'.format(src_path))
     if choosen_act=='1':
         create_new()
     elif choosen_act=='2':
         create_new()
         fill_db()
+    elif choosen_act=='3':
+        create_new()
+        fill_db()
+        create_admin()
     elif choosen_act=='q':
-        exit()
+        sys.exit(0)
     else:
         main()
 
