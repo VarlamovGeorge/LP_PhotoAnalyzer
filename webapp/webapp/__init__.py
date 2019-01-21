@@ -2,7 +2,7 @@ from flask import Flask, render_template, flash, redirect, request, url_for
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_migrate import Migrate
 
-from webapp.model import db, Users
+from webapp.model import * #db, Users
 from webapp.settings.models import StorageUsers, Storages, UserPreferences
 from webapp.forms import LoginForm
 from webapp.settings.views import settings
@@ -67,7 +67,20 @@ def create_app():
         selected_classes = request.form.getlist('class')
         selected_start_date = request.form.get('start_date')
         selected_end_date = request.form.get('end_date')
-        print(selected_classes, selected_start_date, selected_end_date)
+        current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
+        threshold = current_user_pref.classification_threshold
+        print(selected_classes, selected_start_date, selected_end_date, threshold)
+        print(type(selected_classes), type(selected_start_date), type(selected_end_date), type(threshold))
+
+        selected_photos = Photos.query. \
+            join(photosclasses). \
+            filter(photosclasses.c.weight>threshold). \
+            join(Classes). \
+            filter(Classes.name.in_(selected_classes)).all()
+        
+        for ph in selected_photos:
+            print(ph.id)
+
         return redirect(url_for('index'))
 
     return app

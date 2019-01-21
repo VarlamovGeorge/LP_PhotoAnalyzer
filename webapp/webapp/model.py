@@ -26,7 +26,7 @@ class Classes(db.Model):
     __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=True)
-    photos = db.relationship('Photos', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
+    photos = db.relationship('Photos', secondary=photosclasses, lazy='subquery', backref=db.backref('photos', lazy=True))
 
     def __repr__(self):
         return '<Class {}>'.format(self.name)
@@ -44,6 +44,8 @@ class Photos(db.Model):
     longtitude = db.Column(db.Integer)
     latitude = db.Column(db.Integer)
     folder_id = db.Column(db.Integer, db.ForeignKey('folders.id'), nullable=False)
+
+    classes = db.relationship('Classes', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
 
     remote_id = db.Column(db.String)
     path = db.Column(db.String)
