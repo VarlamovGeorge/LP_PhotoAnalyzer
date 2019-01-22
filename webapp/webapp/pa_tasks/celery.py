@@ -1,6 +1,7 @@
 from celery import Celery
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
+import requests
 
 import dropbox
 
@@ -167,6 +168,38 @@ def sync_file_list(id_storage):
 def get_class(id_file):
     '''
     Классификация файла
+
+    Шаг1. Выкачать файл из хранилища
+    Шаг2. Отправить файл в виде POST запроса в сервис нейронки
+    Шаг3. Полученные классы разложить по таблицам
     '''
     logger.info('Task 3: get_class')
 
+    app = create_app()
+    with app.app_context():
+        image_in_db = Photos.query.filter(Photos.id==id_file).filter(Photos.status==Photos.STATUS_NEED_CLASSIFY).first()
+        if not image_in_db:
+            return
+
+        try:
+            # Шаг1
+            metadata, response = dbx.files_download(image.path)
+            image_in_dropbox = response.content
+            
+            # Шаг2
+            files = {'image': image_in_dropbox}
+            cnn_response = requests.post('http://cnn_service:8080/cnn', files=files)
+
+            if cnn_response.status_code == requests.codes.ok:
+                # Шаг3
+                pass
+            else:
+                # TODO: Надо пересоздать задачу!
+                pass
+
+        except dropbox.exceptions.ApiError as ex:
+            # TODO: Надо пересоздать задачу!
+            logger.error('Проблемы с выкачиванием картинки id:{}'.format(id_file))
+            
+
+    
