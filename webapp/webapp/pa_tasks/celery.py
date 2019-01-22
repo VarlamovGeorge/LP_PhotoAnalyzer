@@ -192,17 +192,14 @@ def get_class(id_file):
             # Шаг2
             files = {'image': image_in_dropbox}
             cnn_response = requests.post('http://cnn_service:8080/cnn', files=files)
+            cnn_response.raise_for_status()
 
-            if cnn_response.status_code == requests.codes.ok:
-                # Шаг3
-                pass
-            else:
-                # TODO: Надо пересоздать задачу!
-                pass
+            # Шаг3
 
         except dropbox.exceptions.ApiError as ex:
-            # TODO: Надо пересоздать задачу!
             logger.error('Проблемы с выкачиванием картинки id:{}'.format(id_file))
-            
-
+            raise self.retry(exc=ex)
+        except requests.exceptions.RequestException as ex:
+            logger.error('Проблема работы с cnn сервисом')
+            raise self.retry(exc=ex)
     
