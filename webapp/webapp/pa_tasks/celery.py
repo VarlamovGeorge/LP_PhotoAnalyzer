@@ -172,6 +172,9 @@ def get_class(id_file):
     Шаг1. Выкачать файл из хранилища
     Шаг2. Отправить файл в виде POST запроса в сервис нейронки
     Шаг3. Полученные классы разложить по таблицам
+
+    В случае ошибок, задача перезапускается
+    https://www.distributedpython.com/2018/09/04/error-handling-retry/
     '''
     logger.info('Task 3: get_class')
 
