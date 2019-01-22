@@ -23,7 +23,9 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 app = Flask(__name__)
-ml = cnn.load_cnn_model()
+global ml
+global graph
+ml, graph = cnn.init()
 
 @app.route('/')
 def index():
@@ -42,7 +44,8 @@ def run_cnn():
     if attachment:
         try:
             img = Image.open(attachment.stream)
-            result = json.dumps(cnn.img_analyze(img, ml), cls=NumpyEncoder)
+            with graph.as_default():
+                result = json.dumps(cnn.img_analyze(img, ml), cls=NumpyEncoder)
         except Exception as e:
             result_error['exeption'] = e
             result_error['reason'] = 'exception'

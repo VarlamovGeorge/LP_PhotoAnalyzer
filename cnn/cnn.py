@@ -1,3 +1,4 @@
+import tensorflow
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.models import model_from_json
 from keras.preprocessing import image
@@ -11,6 +12,12 @@ cp.classes_list.sort()
 # cnn_ver = cp.ver
 cnn_descr = cp.description
 cnn_date = cp.create_date
+
+
+def init():
+    model = load_cnn_model()
+    graph = tensorflow.get_default_graph()
+    return model, graph
 
 
 def load_cnn_model():
