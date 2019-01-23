@@ -45,7 +45,11 @@ def run_cnn():
         try:
             img = Image.open(attachment.stream)
             with graph.as_default():
-                result = json.dumps(cnn.img_analyze(img, ml), cls=NumpyEncoder)
+                result = {
+                        'status': 'OK',
+                        'prediction': cnn.img_analyze(img, ml),
+                        }
+                result = json.dumps(result, cls=NumpyEncoder)
         except Exception as e:
             result_error['exeption'] = e
             result_error['reason'] = 'exception'

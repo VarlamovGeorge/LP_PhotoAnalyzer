@@ -71,7 +71,12 @@ def img_analyze(input_image, loaded_model):
     cls_sorted = sorting[0]
 
     # Словарь с результатами
-    prediction = {'alg_name': cnn_descr, 'create_date': cnn_date}
+    prediction = {
+            'cnn_info': {
+                'alg_name': cnn_descr, 
+                'create_date': cnn_date},
+            'labels': {},
+            }
     for value in cls_sorted:
         predicted_label = cp.classes_list[value]
         prob = y_prob[0][value]
@@ -80,6 +85,6 @@ def img_analyze(input_image, loaded_model):
         
         # Добавляем в словарь только классы с весами больше 0
         if round(prob,5) != 0:
-            prediction[predicted_label] = round(prob,5)
+            prediction['labels'][predicted_label] = round(prob,5)
 
     return prediction

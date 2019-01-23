@@ -3,7 +3,7 @@ from PIL import Image
 
 def main():
     # Фотография для анализа:
-    path = 'C:/Users/Jenkins/Desktop/1.jpg'
+    path = 'pics/cat_man.jpg'
     img = Image.open(path)
     # Загружаем нейронную сеть:
     ml = cnn.load_cnn_model()
