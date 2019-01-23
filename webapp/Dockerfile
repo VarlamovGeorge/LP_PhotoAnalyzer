@@ -12,5 +12,5 @@ ENV FLASK_APP=webapp
 
 COPY . .
 
-RUN pip install --no-cache-dir -U pip && pip install --no-cache-dir -r webapp/requirements.txt
+RUN pip install --no-cache-dir -r webapp/requirements.txt
 
