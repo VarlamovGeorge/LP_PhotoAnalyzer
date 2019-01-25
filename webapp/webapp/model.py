@@ -44,18 +44,18 @@ class Photos(db.Model):
     longtitude = db.Column(db.Integer)
     latitude = db.Column(db.Integer)
     folder_id = db.Column(db.Integer, db.ForeignKey('folders.id'), nullable=False)
-
-    classes = db.relationship('Classes', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
-
-    remote_id = db.Column(db.String)
-    path = db.Column(db.String)
+    #remote_id = db.Column(db.String)
     size = db.Column(db.Integer)
     width = db.Column(db.Integer)
     height = db.Column(db.Integer)
-    status = db.Column(db.Integer)
+    status = db.Column(db.Integer, nullable=False)
 
-    revision = db.Column(db.String)
-    content_hash = db.Column(db.String)
+    dropb_path = db.Column(db.String)
+    dropb_file_id = db.Column(db.Integer)
+    dropb_file_rev = db.Column(db.String)
+    dropb_hash = db.Column(db.String)
+
+    classes = db.relationship('Classes', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
 
     def __repr__(self):
         return '<Image {}>'.format(self.name)
