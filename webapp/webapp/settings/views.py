@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
 from flask import current_app as app
 from flask_login import current_user, login_required
 
 from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
-from webapp.model import Users
-from webapp.settings.models import StorageUsers 
+from webapp.model import *
+from webapp.settings.models import StorageUsers, UserPreferences
 from webapp import db
 
 settings = Blueprint('settings', __name__, template_folder='templates')
@@ -14,17 +14,24 @@ settings = Blueprint('settings', __name__, template_folder='templates')
 @settings.route('/')
 @login_required
 def index():
+    title = 'Настройки'
+    try:
+        current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
+        threshold = current_user_pref.classification_threshold
+    except:
+        threshold = 0
     context = {
         'title' : 'Settings',
         'current_user' : current_user,
         'storages' : current_user.storageusers,
+        'threshold': threshold,
             }
     if current_user.is_authenticated:
             user = current_user.login
     else:
             user = 'guest'
     
-    return render_template('settings/index.html', context=context, user=user)
+    return render_template('settings/index.html', context=context, user=user, page_title=title)
 
 
 def get_dropbox_auth_flow(web_app_session):
@@ -77,3 +84,29 @@ def dropbox_auth_finish():
 
     return redirect(url_for('settings.index'))
 
+@settings.route('/update_threshold')
+@login_required
+def update_threshold():
+    
+    new_threshold = request.args.get('threshold', 0, type=int)
+    print(new_threshold)
+    
+    # Если запись с настройками в БД есть - обновляем
+    try:
+        current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
+        current_user_pref.classification_threshold = new_threshold
+
+        db.session.commit()
+
+        print('New threshold: {}'.format(new_threshold))
+        #return jsonify(result=new_threshold)
+
+    # У пользователя еще нет настроек в БД, добавляем
+    except:
+        new_user_pref = UserPreferences(user_id=current_user.id, classification_threshold = new_threshold)
+
+        db.session.add(new_user_pref)
+        db.session.commit()
+
+            #return jsonify(result='error')
+    return jsonify(result=new_threshold)

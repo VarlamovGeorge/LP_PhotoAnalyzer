@@ -1,14 +1,30 @@
 {% extends 'base.html' %}
 
 {% block body_content %}
-<h1>Настройки пользователя</h1>
-
-
-<h2>Подключенные хранилища</h2>
-<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Add Dropbox</a><br>
-<ul>
-{% for storage in context.storages %}
-    <li>{{ storage.name }}</li>
-{% endfor %}
-</ul>
+<div class='container'>
+	<script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  </script>
+  <script type=text/javascript src="{{ url_for('static', filename='th.js') }}"></script>
+	<div class='row'>
+		<div class='col-6'>
+			<h4>Подключенные хранилища</h4>
+			<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Add Dropbox</a><br>
+			<ul>
+				{% for storage in context.storages %}
+				<li>{{ storage.name }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class='col-6'>
+			<h4>Порог отнесения фото к классу</h4>
+			<input type="range" class="form-control-range" id="formControlRange" min="0" max="100">
+			<a id="result">{{ context.threshold }}</a>
+			<!--button class="btn btn-primary btn-sm btn-block" id="" >Update</button-->
+			<a id="upd" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Update</a>
+		</div>
+	</div>
+</div>
+<span id="result">?</span>
 {% endblock%}
+

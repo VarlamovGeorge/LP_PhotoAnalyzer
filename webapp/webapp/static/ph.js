@@ -14,7 +14,7 @@ $(function() {
       end_date: $('input[id="end_date"]').val()
     }, function(data) {
       if ( String(data.result)=="error" ){
-        $("#result").text("Ошибка получения данных из БД");
+        $("#result").text("Ошибка получения данных из БД. Возможно не задан порог отнесения к классу (см. Настройки)");
       } else {
         $("#result").text(data.result);
         $('#scroll-group').html(data.result);
