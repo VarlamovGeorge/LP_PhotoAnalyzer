@@ -5,7 +5,7 @@ import requests
 
 import dropbox
 
-from webapp.model import StorageUsers, Folders, Photos, Classes
+from webapp.model import StorageUsers, Folders, Photos, Classes, Algorithms, photosclasses
 from webapp import db, create_app
 
 
@@ -19,7 +19,7 @@ logger = get_task_logger(__name__)
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(300.0, bypass_storages.s(), name='run resync every 300 sec')
+    sender.add_periodic_task(120.0, bypass_storages.s(), name='run resync every 300 sec')
 
 
 @app.task
@@ -103,7 +103,7 @@ def sync_dropbox_storage(storage):
             db.session.flush()
             db.session.refresh(new_image)
 
-            get_class.delay(new_image.id)
+            get_class.delay(new_image.id, storage.id)
         else:
             if image_in_db.revision == fmd.rev:
                 logger.info('Картинка "{}" не менялась'.format(image_in_db.path))
@@ -124,7 +124,7 @@ def sync_dropbox_storage(storage):
                 db.session.commit()
                 db.session.flush()
 
-                get_class.delay(image_in_db.id)
+                get_class.delay(image_in_db.id, storage.id)
 
     def process_entries(entries):
         for entry in entries:
@@ -164,8 +164,15 @@ def sync_file_list(id_storage):
             sync_dropbox_storage(storage)
 
 
-@app.task
-def get_class(id_file):
+def get_current_cnn_version():
+    '''
+    Возвращает id текущей версии нейронки
+    '''
+    return 0
+
+
+@app.task(bind=True)
+def get_class(self, id_file, id_storage):
     '''
     Классификация файла
 
@@ -180,21 +187,58 @@ def get_class(id_file):
 
     app = create_app()
     with app.app_context():
-        image_in_db = Photos.query.filter(Photos.id==id_file).filter(Photos.status==Photos.STATUS_NEED_CLASSIFY).first()
+        # Step0 - Get ACCESS_TOKEN
+        storage = StorageUsers.query.filter(StorageUsers.id == id_storage).first()
+        if (not storage) or (storage.storage_id != 1):
+            return
+        ACCESS_TOKEN = storage.credentials
+        dbx = dropbox.Dropbox(ACCESS_TOKEN)
+
+        image_in_db = db.session.query(Photos).filter(Photos.id==id_file).filter(Photos.status==Photos.STATUS_NEED_CLASSIFY).first()
         if not image_in_db:
             return
 
         try:
             # Шаг1
-            metadata, response = dbx.files_download(image.path)
+            logger.info('Скачиваем картинку: %s' % image_in_db.path)
+            metadata, response = dbx.files_download(image_in_db.path)
             image_in_dropbox = response.content
-            
+
             # Шаг2
+            logger.info('Отправляем картинку в нейронку: %s' % image_in_db.path)
             files = {'image': image_in_dropbox}
-            cnn_response = requests.post('http://cnn_service:8080/cnn', files=files)
+            cnn_response = requests.post('http://cnn_service:5000/cnn', files=files)
             cnn_response.raise_for_status()
 
             # Шаг3
+            result = cnn_response.json()
+            if result.get('status', '') != 'OK':
+                logger.error('Проблема работы с cnn сервисом: %s' % result)
+                raise self.retry(exc=ex)
+
+            prediction = result.get('prediction',{})
+
+            logger.info('Записываем информацию о картинке: %s' % image_in_db.path)
+
+            # Удаляем все классы, которые были получены текущей CNN
+            current_cnn_version = get_current_cnn_version()
+            db.session.query(photosclasses) \
+                    .filter(photosclasses.photo_id==image_in_db.id) \
+                    .filter(photosclasses.alg_id==current_cnn_version) \
+                    .delete()
+
+            labels = prediction.get('labels', {})
+            for label_name, weight in labels.items():
+                class_for_label = db_session.query(Classes).filter(Classes.name==label_name).first()
+                if class_for_label:
+                    photo_label = photosclasses(
+                            alg_id=current_cnn_version,
+                            photo_id=image_in_db.id,
+                            class_id=class_for_label.id,
+                            weight=weight)
+                    db.session.add(photo_label)
+
+            db.session.commit()
 
         except dropbox.exceptions.ApiError as ex:
             logger.error('Проблемы с выкачиванием картинки id:{}'.format(id_file))
@@ -202,4 +246,4 @@ def get_class(id_file):
         except requests.exceptions.RequestException as ex:
             logger.error('Проблема работы с cnn сервисом')
             raise self.retry(exc=ex)
-    
+
