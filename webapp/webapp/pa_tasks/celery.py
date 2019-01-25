@@ -222,21 +222,21 @@ def get_class(self, id_file, id_storage):
 
             # Удаляем все классы, которые были получены текущей CNN
             current_cnn_version = get_current_cnn_version()
-            db.session.query(photosclasses) \
-                    .filter(photosclasses.photo_id==image_in_db.id) \
-                    .filter(photosclasses.alg_id==current_cnn_version) \
-                    .delete()
+            d = photosclasses.delete() \
+                        .where(photosclasses.c.photo_id==image_in_db.id) \
+                        .where(photosclasses.c.alg_id==current_cnn_version)
+            db.session.execute(d)
 
             labels = prediction.get('labels', {})
             for label_name, weight in labels.items():
-                class_for_label = db_session.query(Classes).filter(Classes.name==label_name).first()
+                class_for_label = db.session.query(Classes).filter(Classes.name==label_name).first()
                 if class_for_label:
-                    photo_label = photosclasses(
+                    photo_label = photosclasses.insert().values(
                             alg_id=current_cnn_version,
                             photo_id=image_in_db.id,
                             class_id=class_for_label.id,
                             weight=weight)
-                    db.session.add(photo_label)
+                    db.session.execute(photo_label)
 
             db.session.commit()
 
