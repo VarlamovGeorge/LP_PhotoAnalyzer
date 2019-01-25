@@ -58,6 +58,15 @@ def fill_db():
     # Подключаем базу
     #app = create_app()
     #db.create_all(app=app)
+    global src_path
+    change_src_path=''
+    while (change_src_path!='y') or (change_src_path!='n'):
+        change_src_path = input('Копируемая папка: {}. Хотите изменить? (y/n)'.format(src_path))
+        if change_src_path=='y':
+            src_path = input('Введите полный адрес папки, которую надо скопировать в БД:')
+        
+        elif change_src_path=='n':
+            break
     
     # Читаем файлы из папки и всех вложенных
     files_list = []
@@ -100,7 +109,7 @@ def fill_db():
             file_folder = db.session.query(Folders).filter(Folders.local_path==file['path']).first()
             print(file['file'],file['path'], file_folder.id)
             
-            db.session.add(Photos(name=file['file'], create_date=datetime.now(), status='', folder_id=file_folder.id))
+            db.session.add(Photos(name=file['file'], create_date=datetime.now(), status='1', folder_id=file_folder.id))
 
         db.session.commit()
 
