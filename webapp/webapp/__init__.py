@@ -4,7 +4,6 @@ from flask_migrate import Migrate
 from datetime import datetime
 
 from webapp.model import * #db, Users
-from webapp.settings.models import StorageUsers, Storages, UserPreferences
 from webapp.forms import LoginForm
 from webapp.settings.views import settings
 
@@ -94,7 +93,7 @@ def create_app():
         if other != 'false':
             class_list.append('other')
         
-        print(class_list)
+        app.logger.info(class_list)
 
         start_date = request.args.get('start_date', '1970-01-01')
         end_date = request.args.get('end_date', '3000-01-01')
@@ -107,8 +106,8 @@ def create_app():
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
             threshold = current_user_pref.classification_threshold
-            print(start_date, end_date, threshold)
-            print(type(start_date), type(end_date), type(threshold))
+            app.logger.info(start_date, end_date, threshold)
+            app.logger.info(type(start_date), type(end_date), type(threshold))
 
             selected_photos = Photos.query. \
                 join(photosclasses). \

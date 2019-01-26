@@ -6,7 +6,7 @@ from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
 from webapp.model import *
-from webapp.settings.models import StorageUsers, UserPreferences
+#from webapp.settings.models import StorageUsers, UserPreferences
 from webapp import db
 
 settings = Blueprint('settings', __name__, template_folder='templates')
