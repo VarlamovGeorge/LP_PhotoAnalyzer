@@ -106,8 +106,8 @@ def create_app():
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
             threshold = current_user_pref.classification_threshold
-            app.logger.info(start_date, end_date, threshold)
-            app.logger.info(type(start_date), type(end_date), type(threshold))
+            print(start_date, end_date, threshold)
+            print(type(start_date), type(end_date), type(threshold))
 
             selected_photos = Photos.query. \
                 join(photosclasses). \
@@ -138,7 +138,8 @@ def create_app():
             #return jsonify(result=cats+dogs+humans+cars+cities+landscapes+food+documents+other+str(start_date)+str(end_date))
             return jsonify(result=ph_list)
         
-        except:
+        except Exception as e:
+            print(e)
             return jsonify(result='error')
 
     return app
