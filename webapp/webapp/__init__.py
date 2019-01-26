@@ -112,33 +112,26 @@ def create_app():
             print(start_date, end_date, threshold)
             print(type(start_date), type(end_date), type(threshold))
 
-            selected_photos = Photos.query. \
-                join(photosclasses). \
-                filter(photosclasses.c.weight>threshold). \
-                join(Classes). \
-                filter(Classes.name.in_(class_list)).distinct().all()
+            # selected_photos = Photos.query. \
+            #     join(photosclasses). \
+            #     filter(photosclasses.c.weight>threshold). \
+            #     join(Classes). \
+            #     filter(Classes.name.in_(class_list)).distinct().all()
 
-            #selected_photos = db.session.query(Photos.id, max(Classes.name)). \
-            #     join(photosclasses, Classes). \
-            #     filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list)). \
-            #     all()
-            
-            #selected_photos = selected_photos(Photos.id, Photos.name).group_by(Photos.id).all()
-            #highest_order.c.customer_id
-            # ph_str = ''
-            # for ph in selected_photos:
-            #     ph_str += '<li class=\"list-group-item\">'+str(ph.id)+'</li>\n'
-                
-            # print(ph_str)
-            ph_str = ''
+            selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
+                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight")). \
+                join(photosclasses, Classes). \
+                filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list)). \
+                distinct(). \
+                all()
+               
             ph_list = []
             for ph in selected_photos:
-                ph_str += '<li class=\"list-group-item\">'+str(ph.id)+' '+str(ph.name)+'</li>\n'
+                ph_str = '<li class=\"list-group-item\">'+str(ph.id)+' '+str(ph.name)+' '+str(ph.class_name)+' '+str(ph.weight)+'</li>\n'
                 ph_list.append(ph_str)
 
-            print(ph_list)
+            #print(ph_list)
 
-            #return jsonify(result=cats+dogs+humans+cars+cities+landscapes+food+documents+other+str(start_date)+str(end_date))
             return jsonify(result=ph_list)
         
         except Exception as e:
