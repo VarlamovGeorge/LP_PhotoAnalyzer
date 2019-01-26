@@ -26,7 +26,7 @@ class Classes(db.Model):
     __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=True)
-    photos = db.relationship('Photos', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
+    photos = db.relationship('Photos', secondary=photosclasses, lazy='subquery', backref=db.backref('photos', lazy=True))
 
     def __repr__(self):
         return '<Class {}>'.format(self.name)
@@ -44,16 +44,18 @@ class Photos(db.Model):
     longtitude = db.Column(db.Integer)
     latitude = db.Column(db.Integer)
     folder_id = db.Column(db.Integer, db.ForeignKey('folders.id'), nullable=False)
-
-    remote_id = db.Column(db.String)
-    path = db.Column(db.String)
+    #remote_id = db.Column(db.String)
     size = db.Column(db.Integer)
     width = db.Column(db.Integer)
     height = db.Column(db.Integer)
-    status = db.Column(db.Integer)
+    status = db.Column(db.Integer, nullable=False)
 
-    revision = db.Column(db.String)
-    content_hash = db.Column(db.String)
+    dropb_path = db.Column(db.String)
+    dropb_file_id = db.Column(db.Integer)
+    dropb_file_rev = db.Column(db.String)
+    dropb_hash = db.Column(db.String)
+
+    classes = db.relationship('Classes', secondary=photosclasses, lazy='subquery', backref=db.backref('classes', lazy=True))
 
     def __repr__(self):
         return '<Image {}>'.format(self.name)
@@ -68,31 +70,6 @@ class Folders(db.Model):
 
     def __repr__(self):
         return '<Folder {}>'.format(self.local_path)
-
-
-class Storages(db.Model):
-    __tablename__ = 'storages'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    full_path = db.Column(db.String, nullable=False)
-    api_key = db.Column(db.String)
-    storageusers = db.relationship('StorageUsers', backref='storages', lazy=True)
-
-    def __repr__(self):
-        return '<Storage name {}>'.format(self.name)
-
-
-class StorageUsers(db.Model):
-    __tablename__ = 'storage_users'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    credentials = db.Column(db.Text)
-    storage_id = db.Column(db.Integer, db.ForeignKey('storages.id'), nullable=False)
-    global_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    folders = db.relationship('Folders', backref='storageusers', lazy=True)
-
-    def __repr__(self):
-        return '<Storage user {}>'.format(self.name)
 
 
 class Users(db.Model, UserMixin):
@@ -113,8 +90,4 @@ class Users(db.Model, UserMixin):
         return '<User {}>'.format(self.login)
 
 
-class UserPreferences(db.Model):
-    __tablename__ = 'user_preferences'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    classification_threshold = db.Column(db.Float, nullable=False)
+

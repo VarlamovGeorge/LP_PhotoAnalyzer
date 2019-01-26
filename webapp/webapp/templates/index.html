@@ -1,16 +1,11 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block body_content %}
 <div class='container'>
-  <div class='row'>
-    <div class='col-8'>
-      <h1>{{ page_title }}</h1>
-    </div>
-    <div class='col-4'>
-      <a href="{{ url_for('settings.index') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Настройки</a>
-      <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Вход</a>
-      <a href="{{ url_for('logout') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Выход</a>
-    </div>
-  </div>
+  <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  </script>
+  <script type=text/javascript src="{{ url_for('static', filename='ph.js') }}"></script>
+
 
   <div class='row'>
     {% with messages = get_flashed_messages() %}
@@ -22,155 +17,101 @@
     </div>
     {% endif %}
     {% endwith %}
-  </div>
-
-  <form action="{{ url_for('search') }}" method="post">
-    <div class='row'>
-      <div class='col'>
-
-
-        <h3>Поиск по классу</h3>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="cats" id="defaultCheck1">
-          <label class="form-check-label" for="defaultCheck1">
-            Кот/кошка
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="dogs" id="defaultCheck2">
-          <label class="form-check-label" for="defaultCheck2">
-            Собака
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="humans" id="defaultCheck3">
-          <label class="form-check-label" for="defaultCheck1">
-            Человек
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="cars" id="defaultCheck4">
-          <label class="form-check-label" for="defaultCheck1">
-            Автомобиль
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="cities" id="defaultCheck5">
-          <label class="form-check-label" for="defaultCheck1">
-            Город
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="seashores" id="defaultCheck6">
-          <label class="form-check-label" for="defaultCheck1">
-            Пляж/побережье
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck7">
-          <label class="form-check-label" for="defaultCheck1">
-            Пейзаж
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck8">
-          <label class="form-check-label" for="defaultCheck1">
-            Еда
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck9">
-          <label class="form-check-label" for="defaultCheck1">
-            Документы
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck10">
-          <label class="form-check-label" for="defaultCheck1">
-            Прочее
-          </label>
-        </div>  
-
+  </div> <!--row-->
+  <div class='row'>
+    <div class='col'>
+      <h3>Поиск по классу</h3>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="cats" id="defaultCheck1">
+        <label class="form-check-label" for="defaultCheck1">
+          Кот/кошка
+        </label>
       </div>
-
-      <div class='col'>
-        <div class="container">
-          <div class="form-group">
-            <label >Начало анализируемого периода</label>
-            <input type="date" name="start_date" max="3000-12-31" min="2000-01-01" class="form-control">
-          </div>
-          <div class="form-group">
-            <label >Конец анализируемого периода</label>
-            <input type="date" name="end_date" min="2000-01-01" max="3000-12-31" class="form-control">
-          </div>
-        </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="dogs" id="defaultCheck2">
+        <label class="form-check-label" for="defaultCheck2">
+          Собака
+        </label>
       </div>
-
-      <div class='col'>
-
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="humans" id="defaultCheck3">
+        <label class="form-check-label" for="defaultCheck3">
+          Человек
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="cars" id="defaultCheck4">
+        <label class="form-check-label" for="defaultCheck4">
+          Автомобиль
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="cities" id="defaultCheck5">
+        <label class="form-check-label" for="defaultCheck5">
+          Город
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="landscapes" id="defaultCheck6">
+        <label class="form-check-label" for="defaultCheck6">
+          Пейзаж
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="food" id="defaultCheck7">
+        <label class="form-check-label" for="defaultCheck7">
+          Еда
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="documents" id="defaultCheck8">
+        <label class="form-check-label" for="defaultCheck8">
+          Документы
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" name='class' type="checkbox" value="other" id="defaultCheck9">
+        <label class="form-check-label" for="defaultCheck9">
+          Прочее
+        </label>
+      </div> 
+    </div> <!-- col --> 
+    <div class='col'>
+      <h3>Поиск по дате создания</h3>
+      <p></p>
+      <div class="container">
+        <div class="form-group">
+          <label >Начало анализируемого периода</label>
+          <input type="date" id="start_date" max="3000-12-31" min="2000-01-01" class="form-control">
+        </div>
+        <div class="form-group">
+          <label >Конец анализируемого периода</label>
+          <input type="date" id="end_date" min="2000-01-01" max="3000-12-31" class="form-control">
+        </div>
       </div>
     </div>
+    <div class='col'>
 
+    </div>
+  </div> <!--row-->
+  <div class='row'>
+    <div class='col-4'>
 
-    <div class='row'>
-      <div class='col-4'>
+    </div>
+    <div class='col-4'>
+      <button class="btn btn-primary btn-lg btn-block" id=calculate>Поиск</button>
 
-      </div>
-      <div class='col-4'>
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Поиск</button>
-      </div>
-      <div class='col-4'>
+    </div>
+    <div class='col'>
 
-      </div>
-    </div> <!-- row -->
-
-    <div class='row-12'> 
-      <ul class="list-group" style="height: 250px; overflow-y: scroll;">
-        <li class="list-group-item"><strong>Signature
-        Accommodations</strong>(1480m)
-      </li>
-      <li class="list-group-item"><strong>Signature
-      Accommodations</strong>(1480m)
-    </li>
-    <li class="list-group-item"><strong>Signature
-    Accommodations</strong>(1480m)
-  </li>
-  <li class="list-group-item"><strong>Signature
-  Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-<li class="list-group-item"><strong>Signature
-Accommodations</strong>(1480m)
-</li>
-</ul>
-</div>
-
-</form>
+    </div>
+  </div> <!--row-->
+  <div class='row-12'> 
+    <ul id="scroll-group" class="list-group" style="height: 250px; overflow-y: scroll; display:none;">
+      <li class="list-group-item">Signature Accommodations</li>
+    </ul>
+  </div>
 </div> <!--Container -->
+<!--span id="result">?</span-->
+<span id="error"></span>
 {% endblock %}
