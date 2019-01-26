@@ -5,7 +5,6 @@ from datetime import datetime
 from getpass import getpass
 from webapp import db, create_app
 from webapp.model import *
-from webapp.settings.models import *
 
 # Словарь классов
 classes_dict = [
