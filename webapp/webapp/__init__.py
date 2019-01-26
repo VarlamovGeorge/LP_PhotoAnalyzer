@@ -106,6 +106,9 @@ def create_app():
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
             threshold = current_user_pref.classification_threshold
+            if threshold > 1:
+                threshold = threshold / 100
+
             print(start_date, end_date, threshold)
             print(type(start_date), type(end_date), type(threshold))
 
@@ -115,7 +118,7 @@ def create_app():
                 join(Classes). \
                 filter(Classes.name.in_(class_list)).distinct().all()
 
-            # selected_photos = db.session.query(Photos.id, max(Classes.name)). \
+            #selected_photos = db.session.query(Photos.id, max(Classes.name)). \
             #     join(photosclasses, Classes). \
             #     filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list)). \
             #     all()
