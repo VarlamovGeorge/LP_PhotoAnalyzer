@@ -120,10 +120,10 @@ def fill_db():
             while cl_id2==cl_id1:
                 cl_id2 = random.randint(1, Classes.query.count())
 
-            statement = photosclasses.insert().values(photo_id=ph_id, class_id=cl_id1, weight=round(random.random()*100,5), alg_id=0)
+            statement = photosclasses.insert().values(photo_id=ph_id, class_id=cl_id1, weight=round(random.random(),5), alg_id=0)
             db.session.execute(statement)
             #db.session.commit()
-            statement = photosclasses.insert().values(photo_id=ph_id, class_id=cl_id2, weight=round(random.random()*100,5), alg_id=0)
+            statement = photosclasses.insert().values(photo_id=ph_id, class_id=cl_id2, weight=round(random.random(),5), alg_id=0)
             db.session.execute(statement)
             db.session.commit()
 
