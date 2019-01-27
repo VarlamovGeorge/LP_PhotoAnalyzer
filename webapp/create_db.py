@@ -32,11 +32,13 @@ def create_new():
 
         with app.app_context():
             # Создаем записи в таблице storages
-            dropbox = Storages(id=1, name='dropbox', full_path='')
-            yadisk = Storages(id=2, name='yadisk', full_path='')
+            dropbox = Storages(id=1, name='dropbox', full_path='https://www.dropbox.com')
+            yadisk = Storages(id=2, name='yadisk', full_path='https://disk.yandex.ru/')
+            NAS = Storages(id=3, name='NAS', full_path='')
 
             db.session.add(dropbox)
             db.session.add(yadisk)
+            db.session.add(NAS)
             
             # Создаем словарь базовых классов
             for item in classes_dict:
