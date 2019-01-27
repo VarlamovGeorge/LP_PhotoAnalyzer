@@ -60,3 +60,9 @@ def run_cnn():
 
     return result
 
+
+@app.route('/version')
+def get_version():
+    result = {'cnn_descr':cnn.cnn_descr, 'cnn_date': cnn.cnn_date}
+    return json.dumps(result)
+
