@@ -1,6 +1,7 @@
 import cnn
 from PIL import Image
 
+
 def main():
     # Фотография для анализа:
     path = 'pics/cat_man.jpg'
@@ -10,6 +11,7 @@ def main():
     # Делаем предикт фотографии:
     result = cnn.img_analyze(img, ml)
     print(result)
+
 
 if __name__ == '__main__':
     main()

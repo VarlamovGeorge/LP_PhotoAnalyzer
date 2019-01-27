@@ -7,6 +7,7 @@ import cnn
 
 import numpy as np
 
+
 class NumpyEncoder(json.JSONEncoder):
     """ Special json encoder for numpy types """
     def default(self, obj):
@@ -17,7 +18,7 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj, (np.float_, np.float16, np.float32,
             np.float64)):
             return float(obj)
-        elif isinstance(obj,(np.ndarray,)): #### This is the fix
+        elif isinstance(obj, (np.ndarray, )):  # This is the fix
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
@@ -26,6 +27,7 @@ app = Flask(__name__)
 global ml
 global graph
 ml, graph = cnn.init()
+
 
 @app.route('/')
 def index():
@@ -39,7 +41,7 @@ def index():
 
 @app.route('/cnn', methods=['POST'])
 def run_cnn():
-    result_error = {'status':'error'}
+    result_error = {'status': 'error'}
     attachment = request.files.get('image', None)
     if attachment:
         try:
@@ -63,6 +65,5 @@ def run_cnn():
 
 @app.route('/version')
 def get_version():
-    result = {'cnn_descr':cnn.cnn_descr, 'cnn_date': cnn.cnn_date}
+    result = {'cnn_descr': cnn.cnn_descr, 'cnn_date': cnn.cnn_date}
     return json.dumps(result)
-

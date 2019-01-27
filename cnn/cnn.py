@@ -1,9 +1,6 @@
 import tensorflow
-from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.models import model_from_json
 from keras.preprocessing import image
-from keras.applications.imagenet_utils import decode_predictions
-import os
 import numpy as np
 
 import trained.cnn_properties as cp
@@ -33,10 +30,11 @@ def load_cnn_model():
 
     # Компилируем модель
     loaded_model.compile(loss='categorical_crossentropy',
-                  optimizer='rmsprop',
-                  metrics=['categorical_accuracy'])
+                        optimizer='rmsprop',
+                        metrics=['categorical_accuracy'])
 
     return loaded_model
+
 
 def preprocess_input(x):
     x /= 255.
@@ -44,13 +42,14 @@ def preprocess_input(x):
     x *= 2.
     return x
 
+
 def img_analyze(input_image, loaded_model):
     # Грузим картинку для распознавания
     img = input_image
     width_height_tuple = (300, 300)
     if img.size != width_height_tuple:
         img = img.resize(width_height_tuple)
-    
+
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
 
@@ -60,9 +59,9 @@ def img_analyze(input_image, loaded_model):
     # preds = loaded_model.predict(x)
     # print('Predicted:', preds)
 
-    y_prob = loaded_model.predict(x) 
-    y_classes = y_prob.argmax(axis=-1)
-    #print(y_classes, y_prob)
+    y_prob = loaded_model.predict(x)
+    # y_classes = y_prob.argmax(axis=-1)
+    # print(y_classes, y_prob)
 
     # Сортируем вероятности классов в убывающем порядке
     sorting = (-y_prob).argsort()
@@ -73,18 +72,18 @@ def img_analyze(input_image, loaded_model):
     # Словарь с результатами
     prediction = {
             'cnn_info': {
-                'alg_name': cnn_descr, 
+                'alg_name': cnn_descr,
                 'create_date': cnn_date},
             'labels': {},
             }
     for value in cls_sorted:
         predicted_label = cp.classes_list[value]
         prob = y_prob[0][value]
-        #prob = "%.5f" % round(prob,5)
-        #print("I have %s%% sure that it belongs to %s." % (prob, predicted_label))
-        
+        # prob = "%.5f" % round(prob,5)
+        # print("I have %s%% sure that it belongs to %s." % (prob, predicted_label))
+
         # Добавляем в словарь только классы с весами больше 0
-        if round(prob,5) != 0:
-            prediction['labels'][predicted_label] = round(prob,5)
+        if round(prob, 5) != 0:
+            prediction['labels'][predicted_label] = round(prob, 5)
 
     return prediction
