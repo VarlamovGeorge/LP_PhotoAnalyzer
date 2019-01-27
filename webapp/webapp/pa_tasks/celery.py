@@ -2,13 +2,10 @@ from celery import Celery
 from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 import requests
-
 import dropbox
 
 from webapp.model import StorageUsers, Folders, Photos, Classes, Algorithms, photosclasses
 from webapp import db, create_app
-
-
 
 
 app = Celery('pa_tasks', broker='amqp://guest@rabbitmq//')
@@ -19,7 +16,44 @@ logger = get_task_logger(__name__)
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(120.0, bypass_storages.s(), name='run resync every 300 sec')
+    '''
+    
+    '''
+    sender.add_periodic_task(300.0, bypass_storages.s(), name='run resync every 300 sec')
+    sender.add_periodic_task(300.0, update_cnn_version.s(), name='update cnn version')
+
+
+@app.task
+def update_cnn_version():
+    '''
+    Получает актуальную версию нейронки и пишет ее в базу
+    '''
+    # cnn_descr
+    # cnn_date
+    app = create_app()
+    with app.app_context():
+        try:
+            cnn_response = requests.get('http://cnn_service:5000/version')
+            cnn_response.raise_for_status()
+
+            cnn_version = cnn_response.json()
+            if not (cnn_version.get('cnn_date', None) and cnn_version.get('cnn_descr', None)):
+                logger.error('Странный ответ от сервиса: %s' % cnn_response.text)
+                return
+
+            current_version = db.session.query(Algorithms) \
+                                        .filter(Algorithms.name==cnn_version['cnn_descr']) \
+                                        .filter(Algorithms.create_date==cnn_version['cnn_date']) \
+                                        .first()
+
+            if not current_version:
+                new_cnn_version = Algorithms(name=cnn_version['cnn_descr'], create_date=cnn_version['cnn_date'])
+                db.session.add(new_cnn_version)
+                db.session.commit()
+                logger.info('Новая версия нейронной сети: name:"%s" create_date:"%s"' % (cnn_version['cnn_descr'], cnn_version['cnn_date']))
+
+        except requests.exceptions.RequestException as ex:
+            logger.error(ex)
 
 
 @app.task
@@ -145,7 +179,6 @@ def sync_dropbox_storage(storage):
         logger.info('Картинка {} не была найдена в Dropbox'.format(image.path))
 
 
-
 @app.task
 def sync_file_list(id_storage):
     '''
@@ -162,6 +195,14 @@ def sync_file_list(id_storage):
 
         if storage.storage_id == 1:
             sync_dropbox_storage(storage)
+
+
+@app.task
+def classify_photos():
+    '''
+    Для каждой неотклассифицированной фотографии запускает отдельную задачу классификации
+    '''
+    pass
 
 
 def get_current_cnn_version():
