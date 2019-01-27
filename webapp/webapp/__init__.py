@@ -7,6 +7,19 @@ from webapp.model import * #db, Users
 from webapp.forms import LoginForm
 from webapp.settings.views import settings
 
+
+classes_dict_list = [
+    {'id': 1, 'label': 'cats'},
+    {'id': 2, 'label': 'dogs'},
+    {'id': 3, 'label': 'cars'},
+    {'id': 4, 'label': 'humans'},
+    {'id': 5, 'label': 'landscapes'},
+    {'id': 6, 'label': 'food'},
+    {'id': 7, 'label': 'cities'},
+    {'id': 8, 'label': 'documents'},
+    {'id': 9, 'label': 'other'}
+    ]
+
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
@@ -65,33 +78,9 @@ def create_app():
     @app.route('/search')
     def search():
         class_list = []
-        cats = request.args.get('cats', 'false')
-        if cats != 'false':
-            class_list.append('cats')
-        dogs = request.args.get('dogs', 'false')
-        if dogs != 'false':
-            class_list.append('dogs')
-        humans = request.args.get('humans', 'false')
-        if humans != 'false':
-            class_list.append('humans')
-        cars = request.args.get('cars', 'false')
-        if cars != 'false':
-            class_list.append('cars')
-        cities = request.args.get('cities', 'false')
-        if cities != 'false':
-            class_list.append('cities')
-        landscapes = request.args.get('landscapes', 'false')
-        if landscapes != 'false':
-            class_list.append('landscapes')
-        food = request.args.get('food', 'false')
-        if food != 'false':
-            class_list.append('food')
-        documents = request.args.get('documents', 'false')
-        if documents != 'false':
-            class_list.append('documents')
-        other = request.args.get('other', 'false')
-        if other != 'false':
-            class_list.append('other')
+        for cl in classes_dict_list:
+            if request.args.get(cl['label'], 'false') != 'false':
+                class_list.append(cl['label'])
         
         app.logger.info(class_list)
 
