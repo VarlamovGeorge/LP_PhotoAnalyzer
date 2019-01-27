@@ -5,6 +5,9 @@
     SQLALCHEMY_DATABASE_URI = 'database-uri'
     SECRET_KEY = 'secret-key'
 
+    DROPBOX_APP_KEY = 'ключ, который выдает Dropbox для доступа к API'
+    DROPBOX_APP_SECRET = 'пароль, который выдает Dropbox для доступа к API'
+
 Где:
 - database-uri - тип и путь БД для SQLAlchemy;
 - secret-key - строка-ключ для шифрования паролей пользователей Flask-приложения.
