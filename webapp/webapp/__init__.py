@@ -2,13 +2,16 @@ from flask import Flask, render_template, flash, redirect, request, url_for, jso
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_migrate import Migrate
 from datetime import datetime
+from werkzeug.contrib.fixers import ProxyFix
 
 from webapp.model import * #db, Users
 from webapp.forms import LoginForm
 from webapp.settings.views import settings
 
+
 def create_app():
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     app.config.from_pyfile('config.py')
     db.init_app(app)
     migrate = Migrate(app, db)

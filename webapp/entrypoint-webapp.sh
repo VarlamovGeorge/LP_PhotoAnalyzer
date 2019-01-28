@@ -21,5 +21,6 @@ done
 
 flask db upgrade
 
-flask run --host=0.0.0.0
+#flask run --host=0.0.0.0
+gunicorn -b 0.0.0.0:5000 -w 2 "webapp:create_app()"
 
