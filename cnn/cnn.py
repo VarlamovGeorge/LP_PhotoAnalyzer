@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
 import tensorflow
 from tensorflow.python.keras.models import model_from_json
 from keras.preprocessing import image
