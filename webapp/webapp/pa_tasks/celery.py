@@ -281,7 +281,6 @@ def get_class(self, id_file, id_storage):
 
         image_in_db = db.session.query(Photos) \
                                 .filter(Photos.id == id_file) \
-                                .filter(Photos.status == Photos.STATUS_OK) \
                                 .first()
         if not image_in_db:
             return
