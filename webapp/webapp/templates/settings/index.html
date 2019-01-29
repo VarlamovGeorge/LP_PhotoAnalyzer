@@ -4,6 +4,7 @@
 <div class='container'>
 	<script type=text/javascript>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    var db_threshold = {{ context.threshold|tojson|safe }};
   </script>
   <script type=text/javascript src="{{ url_for('static', filename='updthreshold.js') }}"></script>
 	<div class='row'>
@@ -18,7 +19,7 @@
 		</div>
 		<div class='col-6'>
 			<h4>Порог отнесения фото к классу</h4>
-			<input type="range" class="form-control-range" id="formControlRange" min="0" max="100">
+			<input name="slider1" type="range" class="form-control-range" id="formControlRange" min="0" max="100">
 			<a id="result">{{ context.threshold }}</a>
 			<!--button class="btn btn-primary btn-sm btn-block" id="" >Update</button-->
 			<a id="upd" class="btn btn-primary btn-lg" tabindex="-1" role="button" aria-disabled="true">Update</a>
