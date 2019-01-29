@@ -1,3 +1,7 @@
+window.onload = function() {
+            $('input[id="formControlRange"]').val(db_threshold);
+        };
+
 $(function() {
   $('a#upd').bind('click', function() {
     $.getJSON($SCRIPT_ROOT + '/settings/update_threshold', {

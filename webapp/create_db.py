@@ -26,17 +26,26 @@ app = create_app()
 db.create_all(app=app)
 
 def create_new():
+    '''
+    Функция создания структуры новой БД. Также:
+    1) в таблице Storages создается справочник из 3 типов хранилищ:
+    dropbox, yadisk, NAS;
+    2) в таблице Classes создается справочник используемых классов classes_dict;
+    3) создается запись о фиктивном алгоритме в таблице algorithms
+    '''
     try:
         app = create_app()
         db.create_all(app=app)
 
         with app.app_context():
             # Создаем записи в таблице storages
-            dropbox = Storages(id=1, name='dropbox', full_path='')
-            yadisk = Storages(id=2, name='yadisk', full_path='')
+            dropbox = Storages(id=1, name='dropbox', full_path='https://www.dropbox.com')
+            yadisk = Storages(id=2, name='yadisk', full_path='https://disk.yandex.ru/')
+            NAS = Storages(id=3, name='NAS', full_path='')
 
             db.session.add(dropbox)
             db.session.add(yadisk)
+            db.session.add(NAS)
             
             # Создаем словарь базовых классов
             for item in classes_dict:
@@ -54,9 +63,11 @@ def create_new():
         sys.exit(0)
        
 def fill_db():
-    # Подключаем базу
-    #app = create_app()
-    #db.create_all(app=app)
+    '''
+    Функция для заполнения базы тестовыми значениями из папки src_path:
+    списовк фотографий и папок будет взят из указанной директории, классификация каждой фотографии
+    будет осуществлена к 2 случайным меткам со случайными весами [0;1]
+    '''
     global src_path
     change_src_path=''
     while (change_src_path!='y') or (change_src_path!='n'):
@@ -75,6 +86,7 @@ def fill_db():
 
     # Список словарей path-file, с файлами jpg
     jpg_files_list = []
+
     # Множество путей, содержащих файлы jpg
     jpg_folders_set = set({})
     for address, dirs, files in files_list:
@@ -130,7 +142,10 @@ def fill_db():
         print('Отнесение фотографий к классам выполнено.')
 
 def create_admin():
-    # Вносим в БД дефолтного пользователя с id=0
+    '''
+    Функция создания в БД дефолтного пользователя с id=0. Пароль задается пользователем через input
+    '''
+
     while True:
         pass1 = getpass('Введите пароль для пользователя admin:')
         pass2 = getpass('Повторите пароль:')
@@ -152,6 +167,10 @@ def create_admin():
 
 
 def main():
+    '''
+    Базовая функция для предоставления пользователю выбора дополнительных действий при создании БД
+    '''
+    
     choosen_act = input('1 - только создание новой БД; \n \
     2 - (1)+заполнение её данными из папки {};\n \
     3 - (2)+создание пользователя admin; \n \

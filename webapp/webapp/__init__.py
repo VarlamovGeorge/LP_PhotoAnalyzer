@@ -8,6 +8,18 @@ from webapp.model import * #db, Users
 from webapp.forms import LoginForm
 from webapp.settings.views import settings
 
+# Словарь используемых классов
+classes_dict_list = [
+    {'id': 1, 'label': 'cats'},
+    {'id': 2, 'label': 'dogs'},
+    {'id': 3, 'label': 'cars'},
+    {'id': 4, 'label': 'humans'},
+    {'id': 5, 'label': 'landscapes'},
+    {'id': 6, 'label': 'food'},
+    {'id': 7, 'label': 'cities'},
+    {'id': 8, 'label': 'documents'},
+    {'id': 9, 'label': 'other'}
+    ]
 
 def create_app():
     app = Flask(__name__)
@@ -68,36 +80,14 @@ def create_app():
     @app.route('/search')
     def search():
         class_list = []
-        cats = request.args.get('cats', 'false')
-        if cats != 'false':
-            class_list.append('cats')
-        dogs = request.args.get('dogs', 'false')
-        if dogs != 'false':
-            class_list.append('dogs')
-        humans = request.args.get('humans', 'false')
-        if humans != 'false':
-            class_list.append('humans')
-        cars = request.args.get('cars', 'false')
-        if cars != 'false':
-            class_list.append('cars')
-        cities = request.args.get('cities', 'false')
-        if cities != 'false':
-            class_list.append('cities')
-        landscapes = request.args.get('landscapes', 'false')
-        if landscapes != 'false':
-            class_list.append('landscapes')
-        food = request.args.get('food', 'false')
-        if food != 'false':
-            class_list.append('food')
-        documents = request.args.get('documents', 'false')
-        if documents != 'false':
-            class_list.append('documents')
-        other = request.args.get('other', 'false')
-        if other != 'false':
-            class_list.append('other')
+        # Получаем список классов фильтра из GET-запроса
+        for cl in classes_dict_list:
+            if request.args.get(cl['label'], 'false') != 'false':
+                class_list.append(cl['label'])
         
         app.logger.info(class_list)
 
+        # Получаем даты начала и конца периода создания фотографии из GET-запроса
         start_date = request.args.get('start_date', '1970-01-01')
         end_date = request.args.get('end_date', '3000-01-01')
         
@@ -109,32 +99,32 @@ def create_app():
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
             threshold = current_user_pref.classification_threshold
+            
+            # Исключаем ошибку при получении целых значений порога отнесения
             if threshold > 1:
                 threshold = threshold / 100
 
             print(start_date, end_date, threshold)
             print(type(start_date), type(end_date), type(threshold))
 
-            # selected_photos = Photos.query. \
-            #     join(photosclasses). \
-            #     filter(photosclasses.c.weight>threshold). \
-            #     join(Classes). \
-            #     filter(Classes.name.in_(class_list)).distinct().all()
-
+            # Формируем запрос в базу
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
                 (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight")). \
                 join(photosclasses, Classes). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list)). \
                 distinct(). \
                 all()
-               
+            
+            # Формируем html текст с результатами поиска в базе
             ph_list = []
             for ph in selected_photos:
-                ph_str = '<li class=\"list-group-item\">'+str(ph.id)+' '+str(ph.name)+' '+str(ph.class_name)+' '+str(ph.weight)+'</li>\n'
+                ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
+                .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
                 ph_list.append(ph_str)
 
             #print(ph_list)
 
+            # Возвращаем в ajax результат поиска в базе
             return jsonify(result=ph_list)
         
         except Exception as e:

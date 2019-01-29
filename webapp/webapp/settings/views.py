@@ -20,6 +20,18 @@ def index():
         threshold = current_user_pref.classification_threshold
     except:
         threshold = 0
+
+    # Ограничиваем полученное значение и переводим в целое число:
+    if threshold <1:
+        if threshold < 0:
+            threshold = 0
+        else:
+            threshold *= 100
+    elif threshold >100:
+        threshold = 100
+
+    threshold = int(threshold)
+    
     context = {
         'title' : 'Settings',
         'current_user' : current_user,
