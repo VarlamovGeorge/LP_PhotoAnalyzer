@@ -115,7 +115,7 @@ def create_app():
             # Формируем запрос в базу
             sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight")). \
+                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight"), (Folders.local_path).label("folder_path")). \
                 join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
                 Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
@@ -126,8 +126,10 @@ def create_app():
             # Формируем html текст с результатами поиска в базе
             ph_list = []
             for ph in selected_photos:
-                ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
-                .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
+                # ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
+                # .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
+                ph_str = '<li class=\"list-group-item\"><a href="https://www.dropbox.com/preview/{4}/{1}?personal" target="_blank">{0} {1} {2} {3}</a></li>\n' \
+                .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight), str(ph.folder_path))
                 ph_list.append(ph_str)
 
             #print(ph_list)
