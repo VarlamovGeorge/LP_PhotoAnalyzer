@@ -91,10 +91,15 @@ def create_app():
         start_date = request.args.get('start_date', '1970-01-01')
         end_date = request.args.get('end_date', '3000-01-01')
         
+        # Заполняем пустые значения границ периода
         if start_date!='':   
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        else:
+            start_date = datetime.strptime('1970-01-01', '%Y-%m-%d')
         if end_date!='':
             end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        else:
+            end_date = datetime.strptime('3000-01-01', '%Y-%m-%d')
         
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
@@ -113,7 +118,8 @@ def create_app():
                 (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight")). \
                 join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
-                Users.id==current_user.id, Algorithms.create_date==sub.c.max_date). \
+                Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
+                Photos.create_date.between(start_date, end_date)). \
                 distinct(). \
                 all()
             
