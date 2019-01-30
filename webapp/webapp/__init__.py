@@ -110,8 +110,8 @@ def create_app():
             # Формируем запрос в базу
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
                 (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight")). \
-                join(photosclasses, Classes). \
-                filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list)). \
+                join(photosclasses, Classes, Folders, StorageUsers, Users). \
+                filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), Users.id==current_user.id). \
                 distinct(). \
                 all()
             
