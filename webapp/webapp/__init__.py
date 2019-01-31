@@ -115,7 +115,8 @@ def create_app():
             # Формируем запрос в базу
             sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight"), (Folders.local_path).label("folder_path")). \
+                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight"), \
+                (Photos.path).label("folder_path")). \
                 join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
                 Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
