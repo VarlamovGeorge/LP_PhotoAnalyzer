@@ -17,3 +17,9 @@ $(function() {
     return false;
   });
 });
+
+var val = document.getElementById("formControlRange").value;
+    document.getElementById("sliderAmount").innerHTML=val+"%";
+    function showVal(newVal){
+      document.getElementById("sliderAmount").innerHTML=newVal+"%";
+    };
