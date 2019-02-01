@@ -10,7 +10,8 @@ $(function() {
       if ( String(data.result)=="error" ){
         $("#result").text("Ошибка получения данных из БД");
       } else {
-        $("#result").text(data.result);
+        res = (data.result*100).toFixed();
+        $("#result").text(res + "%");
       };
     });
     return false;

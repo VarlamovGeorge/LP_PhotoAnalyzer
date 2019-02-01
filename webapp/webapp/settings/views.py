@@ -101,6 +101,7 @@ def dropbox_auth_finish():
 def update_threshold():
     
     new_threshold = request.args.get('threshold', 0, type=int)
+    new_threshold /= 100
     print(new_threshold)
     
     # Если запись с настройками в БД есть - обновляем
