@@ -96,6 +96,16 @@ def dropbox_auth_finish():
 
     return redirect(url_for('settings.index'))
 
+@settings.route('/yadisk-auth-start')
+@login_required
+def yadisk_auth_start():
+    return redirect('#')
+
+@settings.route('/nas-auth-start')
+@login_required
+def nas_auth_start():
+    return redirect('#')
+
 @settings.route('/update_threshold')
 @login_required
 def update_threshold():
