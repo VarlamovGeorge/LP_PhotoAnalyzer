@@ -129,7 +129,7 @@ def create_app():
             for ph in selected_photos:
                 # ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
                 # .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
-                ph_str = '<li class=\"list-group-item\"><a href="https://www.dropbox.com/preview/{4}/{1}?personal" target="_blank">{0} {1} {2} {3}</a></li>\n' \
+                ph_str = '<li class=\"list-group-item\"><a href="https://www.dropbox.com/preview{4}?personal" target="_blank">{0} {1} {2} {3}</a></li>\n' \
                 .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight), str(ph.folder_path))
                 ph_list.append(ph_str)
 
