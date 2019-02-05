@@ -17,11 +17,11 @@ depends_on = None
 
 
 def upgrade():
-    op.drop_constraint("local_path", "folders")
-    op.create_unique_constraint("uix_1", "folders", "local_path", "storage_user_id")
+    op.drop_constraint("folders_local_path_key", "folders")
+    op.create_unique_constraint("uix_1", "folders", ["local_path", "storage_user_id"])
 
 
 def downgrade():
-    op.create_unique_constraint("local_path", "folders")
-    op.drop_constraint("uix_1", "folders", "local_path", "storage_user_id")
+    op.create_unique_constraint("folders_local_path_key", "folders", ["local_path"])
+    op.drop_constraint("uix_1", "folders")
 
