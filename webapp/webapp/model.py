@@ -60,9 +60,10 @@ class Photos(db.Model):
 class Folders(db.Model):
     __tablename__ = 'folders'
     id = db.Column(db.Integer, primary_key=True)
-    local_path = db.Column(db.String, unique=True, nullable=False)
+    local_path = db.Column(db.String, nullable=False)
     storage_user_id = db.Column(db.Integer, db.ForeignKey('storage_users.id'), nullable=False)
     photos = db.relationship('Photos', backref='folders', lazy=True)
+    db.UniqueConstraint('local_path', 'storage_user_id', name='uix_1')
 
     def __repr__(self):
         return '<Folder {}>'.format(self.local_path)
