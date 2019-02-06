@@ -50,8 +50,8 @@ class Photos(db.Model):
     height = db.Column(db.Integer)
     status = db.Column(db.Integer)
 
-    revision = db.Column(db.String)
-    content_hash = db.Column(db.String)
+    dropb_file_rev = db.Column(db.String)
+    dropb_hash = db.Column(db.String)
 
     def __repr__(self):
         return '<Image {}>'.format(self.name)

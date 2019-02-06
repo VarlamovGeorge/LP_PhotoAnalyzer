@@ -125,15 +125,15 @@ def sync_dropbox_storage(storage):
                     folder_id=root_folder.id,
                     remote_id=fmd.id,
                     path=fmd.path_lower,
-                    revision=fmd.rev,
-                    content_hash=fmd.content_hash,
+                    dropb_file_rev=fmd.rev,
+                    dropb_hash=fmd.content_hash,
                     name=fmd.name,
                     size=fmd.size,
                     status=Photos.STATUS_OK)
             db.session.add(new_image)
             db.session.commit()
         else:
-            if image_in_db.revision == fmd.rev:
+            if image_in_db.dropb_file_rev == fmd.rev:
                 logger.info('Картинка "{}" не менялась'.format(image_in_db.path))
 
                 image_in_db.status = Photos.STATUS_OK
@@ -144,8 +144,8 @@ def sync_dropbox_storage(storage):
 
                 image_in_db.path = fmd.path_lower
                 image_in_db.name = fmd.name
-                image_in_db.revision = fmd.rev
-                image_in_db.content_hash = fmd.content_hash
+                image_in_db.dropb_file_rev = fmd.rev
+                image_in_db.dropb_hash = fmd.content_hash
                 image_in_db.size = fmd.size
                 image_in_db.status = Photos.STATUS_OK
                 db.session.add(image_in_db)
