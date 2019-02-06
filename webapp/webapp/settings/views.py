@@ -5,11 +5,12 @@ from flask_login import current_user, login_required
 from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
+from webapp.pa_tasks.celery import sync_file_list
 from webapp.model import *
-#from webapp.settings.models import StorageUsers, UserPreferences
 from webapp import db
 
 settings = Blueprint('settings', __name__, template_folder='templates')
+
 
 @settings.route('/')
 @login_required
@@ -93,18 +94,24 @@ def dropbox_auth_finish():
             storage_user_id=storage.id)
     db.session.add(root_folder)
     db.session.commit()
+    db.session.refresf(root_folder)
+
+    sync_file_list(storage.id).delay()
 
     return redirect(url_for('settings.index'))
+
 
 @settings.route('/yadisk-auth-start')
 @login_required
 def yadisk_auth_start():
     return redirect('#')
 
+
 @settings.route('/nas-auth-start')
 @login_required
 def nas_auth_start():
     return redirect('#')
+
 
 @settings.route('/update_threshold')
 @login_required
