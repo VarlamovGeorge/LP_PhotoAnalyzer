@@ -165,6 +165,11 @@ def create_admin():
 
         print('Администратор добавлен')
 
+        new_db_user = StorageUsers(id=1, name='Dropbox', credentials='asdfjkl', storage_id=1, global_user_id=0)
+        db.session.add(new_db_user)
+        db.session.commit()
+
+        print('Пользователь Dropbox добавлен')
 
 def main():
     '''
@@ -172,18 +177,14 @@ def main():
     '''
     
     choosen_act = input('1 - только создание новой БД; \n \
-    2 - (1)+заполнение её данными из папки {};\n \
-    3 - (2)+создание пользователя admin; \n \
+    2 - (1)+заполнение её данными из папки и создание пользователя admin {};\n \
     q - выход:\n'.format(src_path))
     if choosen_act=='1':
         create_new()
     elif choosen_act=='2':
         create_new()
-        fill_db()
-    elif choosen_act=='3':
-        create_new()
-        fill_db()
         create_admin()
+        fill_db()
     elif choosen_act=='q':
         sys.exit(0)
     else:
