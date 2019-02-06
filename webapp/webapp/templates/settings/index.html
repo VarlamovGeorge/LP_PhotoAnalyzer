@@ -10,12 +10,15 @@
 	<div class='row'>
 		<div class='col-6'>
 			<h4>Подключенные хранилища</h4>
-			<h5>Dropbox</h5>
-			<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Add Dropbox</a><br>
-			<ul>
+            {% if context.has_dropbox == False %}
+			<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Подключить Dropbox</a><br>
+			{% endif %}
+            <ul>
 				{% for storage in context.storages %}
 					{% if storage.storage_id == 1%}
-					<li>{{ storage.name }}</li>
+                        <li>{{ storage.name }}
+                            <a href="{{ url_for('settings.dropbox_delete') }}" class="btn btn-danger">Delete</a>
+                        </li>
 					{% endif %}
 				{% endfor %}
 			</ul>

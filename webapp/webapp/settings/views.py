@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
-from webapp.pa_tasks.celery import sync_file_list
+#from webapp.pa_tasks.celery import sync_file_list
 from webapp.model import *
 from webapp import db
 
@@ -23,28 +23,50 @@ def index():
         threshold = 0
 
     # Ограничиваем полученное значение и переводим в целое число:
-    if threshold <1:
+    if threshold < 1:
         if threshold < 0:
             threshold = 0
         else:
             threshold *= 100
-    elif threshold >100:
+    elif threshold > 100:
         threshold = 100
 
     threshold = int(threshold)
-    
-    context = {
-        'title' : 'Settings',
-        'current_user' : current_user,
-        'storages' : current_user.storageusers,
-        'threshold': threshold,
-            }
+
+    dropbox_storage = StorageUsers.query \
+                        .filter(StorageUsers.storage_id == 1) \
+                        .filter(StorageUsers.global_user_id == current_user.id) \
+                        .first()
+
     if current_user.is_authenticated:
             user = current_user.login
     else:
             user = 'guest'
-    
+
+    context = {
+        'title': title,
+        'page_title': title,
+        'current_user': current_user,
+        'user': user,
+        'storages': current_user.storageusers,
+        'has_dropbox': not(dropbox_storage is None),
+        'threshold': threshold,
+        }
+
     return render_template('settings/index.html', context=context, user=user, page_title=title)
+
+
+@settings.route('/dropbox-delete')
+@login_required
+def dropbox_delete():
+    # TODO: А может сюда передать StorageUsers.id?
+    db.session.query(StorageUsers) \
+            .filter(StorageUsers.global_user_id == current_user.id) \
+            .filter(StorageUsers.storage_id == 1) \
+            .delete(synchronize_session='fetch')
+    db.session.commit()
+
+    return redirect(url_for('settings.index'))
 
 
 def get_dropbox_auth_flow(web_app_session):
@@ -89,14 +111,7 @@ def dropbox_auth_finish():
     db.session.commit()
     db.session.refresh(storage)
 
-    root_folder = Folders(
-            local_path='/',
-            storage_user_id=storage.id)
-    db.session.add(root_folder)
-    db.session.commit()
-    db.session.refresf(root_folder)
-
-    sync_file_list(storage.id).delay()
+#    sync_file_list(storage.id).delay()
 
     return redirect(url_for('settings.index'))
 

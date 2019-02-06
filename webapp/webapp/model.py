@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
+
 class Algorithms(db.Model):
     __tablename__ = 'algorithms'
     id = db.Column(db.Integer, primary_key=True)
@@ -13,8 +14,9 @@ class Algorithms(db.Model):
     def __repr__(self):
         return '<Algorithm {}>'.format(self.name)
 
+
 photosclasses = db.Table('photos_classes',
-    db.Column('photo_id', db.Integer, db.ForeignKey('photos.id'), primary_key=True),
+    db.Column('photo_id', db.Integer, db.ForeignKey('photos.id', ondelete='CASCADE'), primary_key=True),
     db.Column('class_id', db.Integer, db.ForeignKey('classes.id'), primary_key=True),
     db.Column('alg_id', db.Integer, db.ForeignKey('algorithms.id'), primary_key=True),
     db.Column('weight', db.Float, nullable=False))
@@ -41,14 +43,16 @@ class Photos(db.Model):
     name = db.Column(db.String, nullable=False)
     longtitude = db.Column(db.Integer)
     latitude = db.Column(db.Integer)
-    folder_id = db.Column(db.Integer, db.ForeignKey('folders.id'), nullable=False)
+    folder_id = db.Column(db.Integer, db.ForeignKey('folders.id', ondelete='CASCADE'), nullable=False)
 
     remote_id = db.Column(db.String)
     path = db.Column(db.String)
+    filename = db.Column(db.String)
     size = db.Column(db.Integer)
     width = db.Column(db.Integer)
     height = db.Column(db.Integer)
-    status = db.Column(db.Integer)
+    status_sync = db.Column(db.Integer)
+    status_cnn = db.Column(db.Integer)
 
     dropb_file_rev = db.Column(db.String)
     dropb_hash = db.Column(db.String)
@@ -60,9 +64,10 @@ class Photos(db.Model):
 class Folders(db.Model):
     __tablename__ = 'folders'
     id = db.Column(db.Integer, primary_key=True)
-    local_path = db.Column(db.String, unique=True, nullable=False)
-    storage_user_id = db.Column(db.Integer, db.ForeignKey('storage_users.id'), nullable=False)
+    local_path = db.Column(db.String, nullable=False)
+    storage_user_id = db.Column(db.Integer, db.ForeignKey('storage_users.id', ondelete='CASCADE'), nullable=False)
     photos = db.relationship('Photos', backref='folders', lazy=True)
+    db.UniqueConstraint('local_path', 'storage_user_id', name='uix_1')
 
     def __repr__(self):
         return '<Folder {}>'.format(self.local_path)
