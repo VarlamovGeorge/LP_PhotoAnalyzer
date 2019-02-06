@@ -8,13 +8,13 @@ from webapp.model import StorageUsers, Folders, Photos, Classes, Algorithms, pho
 from webapp import db, create_app
 
 
-app = Celery('pa_tasks', broker='amqp://guest@rabbitmq//')
-app.config_from_object('webapp.pa_tasks.celeryconfig')
+celery_app = Celery('pa_tasks', broker='amqp://guest@rabbitmq//')
+celery_app.config_from_object('webapp.pa_tasks.celeryconfig')
 
 logger = get_task_logger(__name__)
 
 
-@app.on_after_configure.connect
+@celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     '''
 
@@ -24,7 +24,7 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(300.0, reclassify_photos.s(), name='classify photos')
 
 
-@app.task
+@celery_app.task
 def update_cnn_version():
     '''
     Получает актуальную версию нейронки и пишет ее в базу
@@ -59,7 +59,7 @@ def update_cnn_version():
             logger.error(ex)
 
 
-@app.task
+@celery_app.task
 def bypass_storages():
     '''
     Для каждого хранилища запускаем отдельную задачу синхронизации
@@ -177,7 +177,7 @@ def sync_yandex_storage(storage):
     pass
 
 
-@app.task
+@celery_app.task
 def sync_file_list(id_storage):
     '''
     Синхронизирует локальный список файлов с хранилищем.
@@ -198,7 +198,7 @@ def sync_file_list(id_storage):
             sync_yandex_storage(storage)
 
 
-@app.task
+@celery_app.task
 def reclassify_photos():
     '''
     Для каждой неотклассифицированной фотографии запускает отдельную задачу классификации
@@ -257,7 +257,7 @@ def get_current_cnn_version():
     return current_cnn.id
 
 
-@app.task(bind=True)
+@celery_app.task(bind=True)
 def get_class(self, id_file, id_storage):
     '''
     Классификация файла
