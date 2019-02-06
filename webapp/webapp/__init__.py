@@ -10,15 +10,15 @@ from webapp.settings.views import settings
 
 # Словарь используемых классов
 classes_dict_list = [
-    {'id': 1, 'label': 'cats'},
-    {'id': 2, 'label': 'dogs'},
-    {'id': 3, 'label': 'cars'},
-    {'id': 4, 'label': 'humans'},
-    {'id': 5, 'label': 'landscapes'},
-    {'id': 6, 'label': 'food'},
-    {'id': 7, 'label': 'cities'},
-    {'id': 8, 'label': 'documents'},
-    {'id': 9, 'label': 'other'}
+    {'id': 1, 'label': 'cats', 'bootstrap_class': 'badge badge-primary'},
+    {'id': 2, 'label': 'dogs', 'bootstrap_class': 'badge badge-secondary'},
+    {'id': 3, 'label': 'cars', 'bootstrap_class': 'badge badge-success'},
+    {'id': 4, 'label': 'humans', 'bootstrap_class': 'badge badge-danger'},
+    {'id': 5, 'label': 'landscapes', 'bootstrap_class': 'badge badge-warning'},
+    {'id': 6, 'label': 'food', 'bootstrap_class': 'badge badge-info'},
+    {'id': 7, 'label': 'cities', 'bootstrap_class': 'badge badge-light'},
+    {'id': 8, 'label': 'documents', 'bootstrap_class': 'badge badge-dark'},
+    {'id': 9, 'label': 'other', 'bootstrap_class': 'badge badge-secondary'}
     ]
 
 def create_app():
@@ -115,8 +115,8 @@ def create_app():
             # Формируем запрос в базу
             sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                (Classes.name).label("class_name"), (photosclasses.c.weight).label("weight"), \
-                (Photos.path).label("folder_path")). \
+                (Classes.name).label("class_name"), (Classes.id).label("class_id"), \
+                (photosclasses.c.weight).label("weight"), (Photos.path).label("folder_path")). \
                 join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
                 Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
@@ -129,9 +129,18 @@ def create_app():
             for ph in selected_photos:
                 # ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
                 # .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
-                ph_str = '<li class=\"list-group-item\"><a href="https://www.dropbox.com/preview{4}?personal" target="_blank">{0} {1} {2} {3}</a></li>\n' \
-                .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight), str(ph.folder_path))
+                ph_str = '<li class="list-group-item col-xs-8"><a href="https://www.dropbox.com/preview{4}?personal" target="_blank">{0} {1} {2} {3}</a>\n' \
+                .format(
+                    str(ph.id), #0
+                    str(ph.name), #1
+                    str(ph.class_name), #2
+                    str(ph.weight), #3
+                    str(ph.folder_path) #4
+                )
+                ph_str += '<a  class="{0}">{1}</a>'.format(classes_dict_list[ph.class_id-1]['bootstrap_class'], classes_dict_list[ph.class_id-1]['label'])
+                ph_str += '</li>'
                 ph_list.append(ph_str)
+
 
             #print(ph_list)
 
