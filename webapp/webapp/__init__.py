@@ -115,8 +115,7 @@ def create_app():
             # Формируем запрос в базу
             sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
             selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                (Classes.name).label("class_name"), (Classes.id).label("class_id"), \
-                (photosclasses.c.weight).label("weight"), (Photos.path).label("folder_path")). \
+                (Photos.path).label("folder_path")). \
                 join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                 filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
                 Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
@@ -127,17 +126,24 @@ def create_app():
             # Формируем html текст с результатами поиска в базе
             ph_list = []
             for ph in selected_photos:
-                # ph_str = '<li class=\"list-group-item\">{0} {1} {2} {3}</li>\n' \
-                # .format(str(ph.id), str(ph.name), str(ph.class_name), str(ph.weight))
-                ph_str = '<li class="list-group-item col-xs-8"><a href="https://www.dropbox.com/preview{4}?personal" target="_blank">{0} {1} {2} {3}</a>\n' \
+                # Получаем id классов для каждый из полученных фотографий
+                ph_cl = db.session.query((photosclasses.c.class_id).label("ph_class")). \
+                filter(photosclasses.c.photo_id==ph.id, photosclasses.c.weight>threshold).order_by(photosclasses.c.class_id.desc()).all()
+
+                # Формируем HTML-строку для списка
+                ph_str = '<li class="list-group-item"><a href="https://www.dropbox.com/preview{2}?personal" target="_blank">{0} {1}</a>\n' \
                 .format(
                     str(ph.id), #0
                     str(ph.name), #1
-                    str(ph.class_name), #2
-                    str(ph.weight), #3
+                    #str(ph.class_name), #2
+                    #str(ph.weight), #3
                     str(ph.folder_path) #4
                 )
-                ph_str += '<a  class="{0}">{1}</a>'.format(classes_dict_list[ph.class_id-1]['bootstrap_class'], classes_dict_list[ph.class_id-1]['label'])
+                
+                # Добавляем цветные лейблы классов
+                for cl in ph_cl:
+                    ph_str += '<div  class="{0} float-right">{1}</div>'.format(classes_dict_list[cl.ph_class-1]['bootstrap_class'], classes_dict_list[cl.ph_class-1]['label'])
+                
                 ph_str += '</li>'
                 ph_list.append(ph_str)
 
