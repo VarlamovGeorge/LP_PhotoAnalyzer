@@ -3,41 +3,41 @@
 {% block body_content %}
 <div class='container'>
 	<script type=text/javascript>
-    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    var db_threshold = {{ context.threshold|tojson|safe }};
-  </script>
-  <script type=text/javascript src="{{ url_for('static', filename='updthreshold.js') }}"></script>
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		var db_threshold = {{ context.threshold|tojson|safe }};
+	</script>
+	<script type=text/javascript src="{{ url_for('static', filename='updthreshold.js') }}"></script>
 	<div class='row'>
 		<div class='col-6'>
 			<h4>Подключенные хранилища</h4>
-            {% if context.has_dropbox == False %}
+			{% if context.has_dropbox == False %}
 			<a href="{{ url_for('settings.dropbox_auth_start') }}" class="btn btn-primary">Подключить Dropbox</a><br>
 			{% endif %}
-            <ul>
+			<ul>
 				{% for storage in context.storages %}
-					{% if storage.storage_id == 1%}
-                        <li>{{ storage.name }}
-                            <a href="{{ url_for('settings.dropbox_delete') }}" class="btn btn-danger">Удалить</a>
-                        </li>
-					{% endif %}
+				{% if storage.storage_id == 1%}
+				<li>{{ storage.name }}
+					<a href="{{ url_for('settings.dropbox_delete') }}" class="btn btn-danger">Удалить</a>
+				</li>
+				{% endif %}
 				{% endfor %}
 			</ul>
 			<h5>Yandex Disk</h5>
 			<a href="{{ url_for('settings.yadisk_auth_start') }}" class="btn btn-primary">Подключить YaDisk</a><br>
 			<ul>
 				{% for storage in context.storages %}
-					{% if storage.storage_id == 2%}
-					<li>{{ storage.name }}</li>
-					{% endif %}
+				{% if storage.storage_id == 2%}
+				<li>{{ storage.name }}</li>
+				{% endif %}
 				{% endfor %}
 			</ul>
 			<h5>NAS</h5>
 			<a href="{{ url_for('settings.nas_auth_start') }}" class="btn btn-primary">Подключить NAS</a><br>
 			<ul>
 				{% for storage in context.storages %}
-					{% if storage.storage_id == 3%}
-					<li>{{ storage.name }}</li>
-					{% endif %}
+				{% if storage.storage_id == 3%}
+				<li>{{ storage.name }}</li>
+				{% endif %}
 				{% endfor %}
 			</ul>
 		</div>
