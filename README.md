@@ -19,11 +19,11 @@
 6. (TODO) Возможность находить на фотографиях конкретных людей (например: себя, маму, жену, друга).
 7. (TODO) Создание видео (набор слайдов) или публикации в соцсети псевдослучайных фотографий на какую-то тему.
 
-# Архитектура системы:
-![Архитектура Photo Analyzer](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/architecture.png)
-
-# Структура базы данных:
-![Структура БД](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/db_descr/db.jpg)
+## Документация:
+1. [Сверточная нейронная сеть](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/blob/master/docs/cnn/README.md)
+2. [Текстовое описание БД и веб-приложения](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/tree/master/docs/webapp/README.md)
+3. [Архитектура](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/architecture.png)
+4. [Структура БД](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/db_descr/db.jpg)
 
 # Настройка системы (wiki):
 1. [Действия пользователя перед запуском](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/wiki/First_Start)
