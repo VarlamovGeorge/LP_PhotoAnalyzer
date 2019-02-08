@@ -11,7 +11,9 @@ $(function() {
       documents: $('input[id="defaultCheck8"]').prop('checked'),
       other: $('input[id="defaultCheck9"]').prop('checked'),
       start_date: $('input[id="start_date"]').val(),
-      end_date: $('input[id="end_date"]').val()
+      end_date: $('input[id="end_date"]').val(),
+      or_radio: $('input[id="orRadio"]').prop('checked'),
+      and_radio: $('input[id="andRadio"]').prop('checked'),
     }, function(data) {
       if ( String(data.result)=="error" ){
         $("#error").text("Ошибка получения данных из БД. Возможно не задан порог отнесения к классу (см. Настройки)");

@@ -2,6 +2,7 @@ from flask import Flask, render_template, flash, redirect, request, url_for, jso
 from flask_login import current_user, LoginManager, login_user, logout_user, login_required
 from flask_migrate import Migrate
 from datetime import datetime
+from sqlalchemy import func
 from werkzeug.contrib.fixers import ProxyFix
 
 from webapp.model import * #db, Users
@@ -49,7 +50,6 @@ def create_app():
             user = 'guest'
         return render_template('index.html', page_title=title, user=user)
 
-
     @app.route('/login')
     def login():
         if current_user.is_authenticated:
@@ -70,7 +70,7 @@ def create_app():
 
         flash('Ошибка входа')
         return redirect(url_for('login'))
-    
+
     @app.route('/logout')
     def logout():
         logout_user()
@@ -84,23 +84,34 @@ def create_app():
         for cl in classes_dict_list:
             if request.args.get(cl['label'], 'false') != 'false':
                 class_list.append(cl['label'])
-        
-        app.logger.info(class_list)
+
+        len_class_list = len(class_list)
+        app.logger.info('classes=%s (%s)', class_list, len_class_list)
 
         # Получаем даты начала и конца периода создания фотографии из GET-запроса
         start_date = request.args.get('start_date', '1970-01-01')
         end_date = request.args.get('end_date', '3000-01-01')
-        
+
+        app.logger.info('start_date=%s', start_date)
+        app.logger.info('end_date=%s', end_date)
+
+        # Получаем значения радио-переключателя И/ИЛИ
+        or_radio = request.args.get('or_radio', 'true')
+        and_radio = request.args.get('and_radio', 'false')
+
+        app.logger.info('or_radio=%s', or_radio)
+        app.logger.info('and_radio=%s', and_radio)
+
         # Заполняем пустые значения границ периода
-        if start_date!='':   
+        if start_date != '':
             start_date = datetime.strptime(start_date, '%Y-%m-%d')
         else:
             start_date = datetime.strptime('1970-01-01', '%Y-%m-%d')
-        if end_date!='':
+        if end_date != '':
             end_date = datetime.strptime(end_date, '%Y-%m-%d')
         else:
             end_date = datetime.strptime('3000-01-01', '%Y-%m-%d')
-        
+
         try:
             current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
             threshold = current_user_pref.classification_threshold
@@ -113,16 +124,30 @@ def create_app():
             print(type(start_date), type(end_date), type(threshold))
 
             # Формируем запрос в базу
-            sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
-            selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                (Photos.path).label("folder_path")). \
-                join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
-                filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
-                Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
-                Photos.create_date.between(start_date, end_date)). \
-                distinct(). \
-                all()
-            
+            if or_radio == 'true':
+                sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
+                selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
+                    (Photos.path).label("folder_path")). \
+                    join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
+                    filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
+                    Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
+                    Photos.create_date.between(start_date, end_date)). \
+                    distinct(). \
+                    all()
+            else:
+                sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
+                selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
+                    (Photos.path).label("folder_path")). \
+                    join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
+                    filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
+                    Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
+                    Photos.create_date.between(start_date, end_date)). \
+                    distinct().group_by(Photos.id, Photos.name, Photos.path).\
+                    having(func.count(Classes.name) == len_class_list).all()
+
+
+            print(selected_photos)
+
             # Формируем html текст с результатами поиска в базе
             ph_list = []
             for ph in selected_photos:
