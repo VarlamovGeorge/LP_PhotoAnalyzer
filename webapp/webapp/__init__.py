@@ -137,16 +137,16 @@ def create_app():
             else:
                 sub = db.session.query(db.func.max(Algorithms.create_date).label('max_date')).subquery()
                 selected_photos = db.session.query((Photos.id).label("id"), (Photos.name).label("name"), \
-                    (Photos.path).label("folder_path"), (Classes.name).label("class_name")). \
+                    (Photos.path).label("folder_path")). \
                     join(photosclasses, Classes, Folders, StorageUsers, Users, Algorithms). \
                     filter(photosclasses.c.weight>threshold, Classes.name.in_(class_list), \
                     Users.id==current_user.id, Algorithms.create_date==sub.c.max_date, \
                     Photos.create_date.between(start_date, end_date)). \
                     distinct().group_by(Photos.id, Photos.name, Photos.path).\
-                    having(func.count(Photos.id) == len_class_list).all()
+                    having(func.count(Classes.name) == len_class_list).all()
 
 
-            #print(selected_photos)
+            print(selected_photos)
 
             # Формируем html текст с результатами поиска в базе
             ph_list = []
