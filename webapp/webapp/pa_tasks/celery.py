@@ -21,9 +21,9 @@ def setup_periodic_tasks(sender, **kwargs):
     '''
 
     '''
-    sender.add_periodic_task(300.0, bypass_storages.s(), name='run resync every 300 sec')
-    sender.add_periodic_task(300.0, update_cnn_version.s(), name='update cnn version')
-    sender.add_periodic_task(300.0, reclassify_photos.s(), name='classify photos')
+    sender.add_periodic_task(120.0, bypass_storages.s(), name='run resync every 300 sec')
+    sender.add_periodic_task(120.0, update_cnn_version.s(), name='update cnn version')
+    sender.add_periodic_task(120.0, reclassify_photos.s(), name='classify photos')
 
 
 @celery_app.task
