@@ -211,6 +211,9 @@ def sync_dropbox_storage(storage):
     #    .filter(Photos.folder_id == Folders.id) \
     #    .group_by(Photos.id)
 
+    # TODO: Только для целей демонстрации
+    reclassify_photos.delay()
+
 
 def sync_yandex_storage(storage):
     pass
