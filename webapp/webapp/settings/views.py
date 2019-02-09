@@ -5,7 +5,6 @@ from flask_login import current_user, login_required
 from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
-#from webapp.pa_tasks.celery import sync_file_list
 from webapp.model import *
 from webapp import db
 
@@ -111,7 +110,8 @@ def dropbox_auth_finish():
     db.session.commit()
     db.session.refresh(storage)
 
-#    sync_file_list(storage.id).delay()
+    from webapp.pa_tasks.celery import sync_file_list
+    sync_file_list.delay(storage.id)
 
     return redirect(url_for('settings.index'))
 
