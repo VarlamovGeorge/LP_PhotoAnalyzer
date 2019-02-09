@@ -24,6 +24,7 @@
 2. [Текстовое описание БД и веб-приложения](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/tree/master/docs/webapp/README.md)
 3. [Архитектура](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/architecture.png)
 4. [Структура БД](https://raw.githubusercontent.com/VarlamovGeorge/LP_PhotoAnalyzer/master/docs/db_descr/db.jpg)
+5. [Реализация](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/blob/master/docs/implementation.png)
 
 # Настройка системы (wiki):
 1. [Действия пользователя перед запуском](https://github.com/VarlamovGeorge/LP_PhotoAnalyzer/wiki/First_Start)
