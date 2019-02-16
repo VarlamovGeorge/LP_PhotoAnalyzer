@@ -19,7 +19,7 @@ logger = get_task_logger(__name__)
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     '''
-
+    Указываем периодичность запуска основных воркеров celery (секунды)
     '''
     sender.add_periodic_task(300.0, bypass_storages.s(), name='run resync every 300 sec')
     sender.add_periodic_task(300.0, update_cnn_version.s(), name='update cnn version')
@@ -212,10 +212,6 @@ def sync_dropbox_storage(storage):
     #    .group_by(Photos.id)
 
 
-def sync_yandex_storage(storage):
-    pass
-
-
 @celery_app.task
 def sync_file_list(id_storage):
     '''
@@ -235,7 +231,15 @@ def sync_file_list(id_storage):
             sync_dropbox_storage(storage)
         if storage.storage_id == 2:
             sync_yandex_storage(storage)
+        if storage.storage_id == 3:
+            sync_nas_storage(storage)
 
+
+def sync_yandex_storage(storage):
+    pass
+
+def sync_nas_storage(storage):
+    pass
 
 @celery_app.task
 def reclassify_photos():
