@@ -5,9 +5,10 @@ from flask_login import current_user, login_required
 from dropbox import DropboxOAuth2Flow
 from dropbox.oauth import BadRequestException, BadStateException, CsrfException, NotApprovedException, ProviderException
 
-#from webapp.pa_tasks.celery import sync_file_list
+# from webapp.pa_tasks.celery import sync_file_list
 from webapp.model import *
 from webapp import db
+import naslist
 
 settings = Blueprint('settings', __name__, template_folder='templates')
 
@@ -111,8 +112,7 @@ def dropbox_auth_finish():
     db.session.commit()
     db.session.refresh(storage)
 
-#    sync_file_list(storage.id).delay()
-
+    # sync_file_list(storage.id).delay()
     return redirect(url_for('settings.index'))
 
 
@@ -127,15 +127,21 @@ def yadisk_auth_start():
 def nas_auth_start():
     return redirect('#')
 
+@settings.route('/get-lan-devices-list')
+@login_required
+def get_lan_devices_list():
+    ip_lst = naslist.map_network()
+    app.logger.info(ip_lst)
+    return redirect('#')
 
 @settings.route('/update_threshold')
 @login_required
 def update_threshold():
-    
+
     new_threshold = request.args.get('threshold', 0, type=int)
     new_threshold /= 100
     print(new_threshold)
-    
+
     # Если запись с настройками в БД есть - обновляем
     try:
         current_user_pref = UserPreferences.query.filter(UserPreferences.user_id==current_user.id).first()
@@ -144,14 +150,14 @@ def update_threshold():
         db.session.commit()
 
         print('New threshold: {}'.format(new_threshold))
-        #return jsonify(result=new_threshold)
+        # return jsonify(result=new_threshold)
 
     # У пользователя еще нет настроек в БД, добавляем
     except:
-        new_user_pref = UserPreferences(user_id=current_user.id, classification_threshold = new_threshold)
+        new_user_pref = UserPreferences(user_id=current_user.id, classification_threshold=new_threshold)
 
         db.session.add(new_user_pref)
         db.session.commit()
 
-            #return jsonify(result='error')
+    # return jsonify(result='error')
     return jsonify(result=new_threshold)
